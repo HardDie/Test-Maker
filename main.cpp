@@ -38,6 +38,8 @@ int main( int argc, char **argv ) {
 			waitPressKey();
 			return 1;
 		}
+		result = typeTest();
+		while ( getc( stdin ) != '\n' );
 	} else if ( argc == 3 ) {
 		if ( test.openFile( argv[1] ) ) {
 			print( "Incorrect file name or the file is not available!\n" );
@@ -143,17 +145,13 @@ int test_question_answer() {
 		print( test.getLength() );
 		print( "\n" );
 
-		print( "\'" );
 		print( test.getQuestion() );
-		print( "\'" );
 		if ( waitPressKey() ) {
 			return 1;
 		}
 
 		print( " - " );
-		print( "\'" );
 		print( test.getAnswer() );
-		print( "\'" );
 		print( "\n" );
 		print( "Press any key..." );
 		if ( waitPressKey() ) {
@@ -171,17 +169,13 @@ int test_answer_question() {
 		print( test.getLength() );
 		print( "\n" );
 
-		print( "\'" );
 		print( test.getAnswer() );
-		print( "\'" );
 		if ( waitPressKey() ) {
 			return 1;
 		}
 
 		print( " - " );
-		print( "\'" );
 		print( test.getQuestion() );
-		print( "\'" );
 		print( "\n" );
 		print( "Press any key..." );
 		if ( waitPressKey() ) {
