@@ -38,8 +38,8 @@ namespace uns {
 			delete[] mas;	// Очищаем старую память
 		}
 		file.getline( tmp[length], SIZE );	// Считываем новую строку
-		if ( tmp[length][strlen(tmp[length]) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
-			tmp[length][strlen(tmp[length]) - 1] = '\0';
+		if ( tmp[length][strlen( tmp[length] ) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
+			tmp[length][strlen( tmp[length] ) - 1] = '\0';
 		}
 		length++;
 		mas = tmp;
@@ -74,11 +74,15 @@ namespace uns {
 		return 0;
 	}
 
+	/*
+	* Name: mixNewWord
+	* Description: Выбирает новое слово для вопроса с учетом двух вопросов
+	*/
 	int ucTestMaker::mixNewWord() {
 		if ( counter == ( 2 * length ) ) {
 			return 1;
 		}
-		while ( flags[index = rand() % length] == 3 || flags[index = rand() % length] == 4 );
+		while ( flags[index = rand() % length] == 3 || flags[index] == 4 );
 		if ( flags[index] == 0 ) {
 			flags[index] = rand() % 2 + 1;
 		} else if ( flags[index] == 1 ) {
