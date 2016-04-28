@@ -74,6 +74,22 @@ namespace uns {
 		return 0;
 	}
 
+	int ucTestMaker::mixNewWord() {
+		if ( counter == ( 2 * length ) ) {
+			return 1;
+		}
+		while ( flags[index = rand() % length] == 3 || flags[index = rand() % length] == 4 );
+		if ( flags[index] == 0 ) {
+			flags[index] = rand() % 2 + 1;
+		} else if ( flags[index] == 1 ) {
+			flags[index] = 3;
+		} else if ( flags[index] == 2 ) {
+			flags[index] = 4;
+		}
+		counter++;
+		return 0;
+	}
+
 	/*
 	* Name: getQuestion
 	* Description: Возвращает вопрос

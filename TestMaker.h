@@ -26,10 +26,12 @@
 					void		addQuestion();
 					void		init();
 					int			newWord();
+					int			mixNewWord();
 			const	char*		getQuestion();
 			const	char*		getAnswer();
 					int			getCounter() { return counter; }
 					int			getLength() { return length; }
+					char		getFlag() { return flags[index]; }
 			~ucTestMaker();
 			
 		};
