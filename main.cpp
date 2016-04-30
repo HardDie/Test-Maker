@@ -6,16 +6,16 @@
 using namespace std;
 
 #ifdef LINUX
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <termios.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <termios.h>
 
-	void	set_keypress();
-	void	reset_keypress();
+void	set_keypress();
+void	reset_keypress();
 
-	static struct termios stored_settings;
+static struct termios stored_settings;
 #elif defined( WINDOWS )
-	#include <conio.h>
+#include <conio.h>
 #endif
 
 int		waitPressKey();
@@ -31,7 +31,9 @@ enum {
 	ST_MENU = 0,
 	ST_QA,
 	ST_AQ,
-	ST_MIX
+	ST_MIX,
+	ST_END,
+	ST_TRY
 };
 
 int main( int argc, char **argv ) {
@@ -39,6 +41,7 @@ int main( int argc, char **argv ) {
 	//		Variables
 	//=============================
 	int state = ST_MENU;
+	int oldState;
 	char isDone = false;
 
 	//=============================
@@ -60,6 +63,9 @@ int main( int argc, char **argv ) {
 			return 1;
 		}
 		state = atoi( argv[2] );
+		if ( state < 1 || state > 3 ) {
+			state = 11;	// При выборе статуса будет ошибка
+		}
 	} else {
 		clearScreen();
 		cout << "Enter file name: ";
@@ -77,87 +83,120 @@ int main( int argc, char **argv ) {
 	//=============================
 	//		Test
 	//=============================
-	#ifdef LINUX
-		set_keypress();
-	#endif
+#ifdef LINUX
+	set_keypress();
+#endif
 
 	while ( !isDone ) {
 		/* State test */
 		switch ( state ) {
+			/* Main menu */
 		case ST_MENU:
 			state = typeTest();
-			continue;
 			break;
+			/* Question -> Answer */
 		case ST_QA:
 			test.init();
 			switch ( test_question_answer() ) {
 			case 'q':
-				isDone = true;
-				continue;
+				state = ST_END;
 				break;
 			case 'm':
 				state = ST_MENU;
-				continue;
+				break;
+			}
+			if ( state == ST_QA ) {
+				oldState = state;
+				state = ST_TRY;
 			}
 			break;
+			/* Answer -> Question */
 		case ST_AQ:
 			test.init();
 			switch ( test_answer_question() ) {
 			case 'q':
-				isDone = true;
-				continue;
+				state = ST_END;
 				break;
 			case 'm':
 				state = ST_MENU;
-				continue;
+				break;
+			}
+			if ( state == ST_AQ ) {
+				oldState = state;
+				state = ST_TRY;
 			}
 			break;
+			/* Mix */
 		case ST_MIX:
 			test.init();
 			switch ( test_mixing() ) {
 			case 'q':
-				isDone = true;
-				continue;
+				state = ST_END;
 				break;
 			case 'm':
 				state = ST_MENU;
-				continue;
+				break;
+			}
+			if ( state == ST_MIX ) {
+				oldState = state;
+				state = ST_TRY;
 			}
 			break;
+		/* Try again? */
+		case ST_TRY:
+			clearScreen();
+			cout << "Want try again?";
+			switch ( waitPressKey() ) {
+			case 'm':
+			case 'M':
+				state = ST_MENU;
+				break;
+			case ' ':
+			case 'y':
+			case 'Y':
+				state = oldState;
+				break;
+			case 'q':
+			case 'Q':
+			case 'n':
+			case 'N':
+				state = ST_END;
+				break;
+			}
+			break;
+		/* End game */
+		case ST_END:
+			isDone = true;
+			cout << endl;
+			break;
+		/* Error */
 		default:
 			cout << "Wrong argument test type\n";
-			isDone = true;
-			continue;
-		}
-		/* Try again? */
-		clearScreen();
-		cout << "Want try again?";
-		char tmp = waitPressKey();
-		if ( tmp != ' ' && tmp != 'y' && tmp != 'Y' ) {
-			isDone = true;
-		}
+			state = ST_END;
+			break;
+		}		
 	}
 
-	#ifdef LINUX
-		reset_keypress();
-	#endif
+#ifdef LINUX
+	reset_keypress();
+#endif
 	return 0;
 }
 
 int waitPressKey() {
-	#ifdef LINUX
-		return getc( stdin );
-	#elif defined( WINDOWS )
-		return _getch();
-	#endif
+#ifdef LINUX
+	return getc( stdin );
+#elif defined( WINDOWS )
+	return _getch();
+#endif
 }
 
 void clearScreen() {
-	#ifdef LINUX
-		system( "clear" );
-	#elif defined( WINDOWS )
-		system( "cls" );
-	#endif
+#ifdef LINUX
+	system( "clear" );
+#elif defined( WINDOWS )
+	system( "cls" );
+#endif
 }
 
 int	typeTest() {
@@ -177,6 +216,10 @@ int	typeTest() {
 			break;
 		case '3':
 			return ST_MIX;
+			break;
+		case 'q':
+		case 'Q':
+			return ST_END;
 			break;
 		default:
 			continue;
