@@ -28,16 +28,23 @@ namespace uns {
 	* Description: Считывает новую строку в конец массива
 	*/
 	void ucTestMaker::addQuestion() {
+		char *newStr = new char[SIZE];
+		file.getline( newStr, SIZE );	// Считываем новую строку
+		if ( strstr( newStr, " - " ) == NULL ) {
+			delete[] newStr;
+			return;
+		}
+
 		char **tmp;	// Создаем временное хранилище
 		tmp = new char*[length + 1];	// Выделяем в него память больше на 1 чем раньше
-		tmp[length] = new char[SIZE];	// Выделяем память под последний элемент
+		
 		for ( int i = 0; i < length; i++ ) {	// Копируем ранее созданные элементы
 			tmp[i] = mas[i];
 		}
 		if ( mas != NULL ) {
 			delete[] mas;	// Очищаем старую память
 		}
-		file.getline( tmp[length], SIZE );	// Считываем новую строку
+		tmp[length] = newStr;
 		if ( tmp[length][strlen( tmp[length] ) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
 			tmp[length][strlen( tmp[length] ) - 1] = '\0';
 		}
