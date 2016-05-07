@@ -10,8 +10,10 @@ using namespace std;
 #include <stdlib.h>
 #include <termios.h>
 
-void	set_keypress();
-void	reset_keypress();
+void	save_keypress();
+void	set_keypress_echo();
+void	set_keypress_noecho();
+void	load_keypress();
 
 static struct termios stored_settings;
 #elif defined( WINDOWS )
@@ -24,6 +26,11 @@ int		typeTest();
 int		test_question_answer();
 int		test_answer_question();
 int		test_mixing();
+int		test_typing_question();
+int		test_typing_answer();
+int		test_typing_mix();
+char	charTranslate( const char symb );
+char*	lowerCase( const char *str );
 
 uns::ucTestMaker test;
 
@@ -32,6 +39,9 @@ enum {
 	ST_QA,
 	ST_AQ,
 	ST_MIX,
+	ST_TYPEQUESTION,
+	ST_TYPEANSWER,
+	ST_TYPEMIX,
 	ST_END,
 	ST_TRY
 };
@@ -63,7 +73,7 @@ int main( int argc, char **argv ) {
 			return 1;
 		}
 		state = atoi( argv[2] );
-		if ( state < 1 || state > 3 ) {
+		if ( state < 1 || state > 6 ) {
 			state = 11;	// При выборе статуса будет ошибка
 		}
 	} else {
@@ -71,7 +81,8 @@ int main( int argc, char **argv ) {
 		cout << "Enter file name: ";
 		char filename[100];
 		cin >> filename;
-		//while ( waitPressKey() != '\n' );
+		cin.clear();
+		while ( cin.get() != '\n' );
 		if ( test.openFile( filename ) ) {
 			cout << "Incorrect file name or the file is not available!\n";
 			waitPressKey();
@@ -84,10 +95,13 @@ int main( int argc, char **argv ) {
 	//		Test
 	//=============================
 #ifdef LINUX
-	set_keypress();
+	save_keypress();
 #endif
 
 	while ( !isDone ) {
+#ifdef LINUX
+		set_keypress_noecho();
+#endif
 		/* State test */
 		switch ( state ) {
 			/* Main menu */
@@ -142,7 +156,64 @@ int main( int argc, char **argv ) {
 				state = ST_TRY;
 			}
 			break;
-		/* Try again? */
+			/* Typing question */
+		case ST_TYPEQUESTION:
+#ifdef LINUX
+			set_keypress_echo();
+#endif
+			test.init();
+			switch ( test_typing_question() ) {
+			case 'q':
+				state = ST_END;
+				break;
+			case 'm':
+				state = ST_MENU;
+				break;
+			}
+			if ( state == ST_TYPEQUESTION ) {
+				oldState = state;
+				state = ST_TRY;
+			}
+			break;
+			/* Typing answer */
+		case ST_TYPEANSWER:
+#ifdef LINUX
+			set_keypress_echo();
+#endif
+			test.init();
+			switch ( test_typing_answer() ) {
+			case 'q':
+				state = ST_END;
+				break;
+			case 'm':
+				state = ST_MENU;
+				break;
+			}
+			if ( state == ST_TYPEANSWER ) {
+				oldState = state;
+				state = ST_TRY;
+			}
+			break;
+			/* Typing mix */
+		case ST_TYPEMIX:
+#ifdef LINUX
+			set_keypress_echo();
+#endif
+			test.init();
+			switch ( test_typing_mix() ) {
+			case 'q':
+				state = ST_END;
+				break;
+			case 'm':
+				state = ST_MENU;
+				break;
+			}
+			if ( state == ST_TYPEMIX ) {
+				oldState = state;
+				state = ST_TRY;
+			}
+			break;
+			/* Try again? */
 		case ST_TRY:
 			clearScreen();
 			cout << "Want try again?";
@@ -154,6 +225,7 @@ int main( int argc, char **argv ) {
 			case ' ':
 			case 'y':
 			case 'Y':
+			case 13:	// Enter
 				state = oldState;
 				break;
 			case 'q':
@@ -164,21 +236,21 @@ int main( int argc, char **argv ) {
 				break;
 			}
 			break;
-		/* End game */
+			/* End game */
 		case ST_END:
 			isDone = true;
 			cout << endl;
 			break;
-		/* Error */
+			/* Error */
 		default:
 			cout << "Wrong argument test type\n";
 			state = ST_END;
 			break;
-		}		
+		}
 	}
 
 #ifdef LINUX
-	reset_keypress();
+	load_keypress();
 #endif
 	return 0;
 }
@@ -205,6 +277,9 @@ int	typeTest() {
 	cout << "1. Question -> Answer\n";
 	cout << "2. Answer -> Question\n";
 	cout << "3. Mixing\n";
+	cout << "4. Typing question\n";
+	cout << "5. Typing answer\n";
+	cout << "6. Typing mixing\n";
 	cout << "Enter: ";
 	while ( 1 ) {
 		switch ( waitPressKey() ) {
@@ -216,6 +291,15 @@ int	typeTest() {
 			break;
 		case '3':
 			return ST_MIX;
+			break;
+		case '4':
+			return ST_TYPEQUESTION;
+			break;
+		case '5':
+			return ST_TYPEANSWER;
+			break;
+		case '6':
+			return ST_TYPEMIX;
 			break;
 		case 'q':
 		case 'Q':
@@ -337,12 +421,226 @@ int test_mixing() {
 	return 0;
 }
 
+int	test_typing_question() {
+	bool repeat = false;
+	while ( repeat || !test.newWord() ) {
+		clearScreen();
+		cout << test.getCounter() << "/" << test.getLength() << endl;
+
+		cout << test.getAnswer() << "\nEnter: ";
+		static char answer[SIZE];
+		cin.getline( answer, SIZE );
+		
+#ifdef WINDOWS
+		for ( int i = 0; i < SIZE; i++ ) {
+			if ( answer[i] == 0 ) {
+				break;
+			}
+			answer[i] = charTranslate( answer[i] );
+		}
+		
+		if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
+#elif defined ( LINUX )
+		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
+#endif
+			cout << "Right!\n";
+			repeat = false;
+		} else if ( strcmp( answer, " " ) == 0 ) {
+			cout << "Next\n";
+			repeat = false;
+		} else {
+			cout << "Wrong: " << test.getQuestion() << endl;
+			repeat = true;
+		}
+		cout << "Press any key...";
+		switch ( waitPressKey() ) {
+		case 'q':
+		case 'Q':
+			return 'q';
+		case 'm':
+		case 'M':
+			return 'm';
+		}
+	}
+	return 0;
+}
+
+int	test_typing_answer() {
+	bool repeat = false;
+	while ( repeat || !test.newWord() ) {
+		clearScreen();
+		cout << test.getCounter() << "/" << test.getLength() << endl;
+
+		cout << test.getQuestion() << "\nEnter: ";
+		static char answer[SIZE];
+		cin.getline( answer, SIZE );
+
+#ifdef WINDOWS
+		for ( int i = 0; i < SIZE; i++ ) {
+			if ( answer[i] == 0 ) {
+				break;
+			}
+			answer[i] = charTranslate( answer[i] );
+		}
+		
+		if ( strcmp( answer, lowerCase ( test.getAnswer() ) ) == 0 ) {
+#elif defined ( LINUX )
+		if ( strcmp( answer, test.getAnswer() ) == 0 ) {
+#endif
+			cout << "Right!\n";
+			repeat = false;
+		} else if ( strcmp( answer, " " ) == 0 ) {
+			cout << "Next\n";
+			repeat = false;
+		} else {
+			cout << "Wrong: " << test.getAnswer() << endl;
+			repeat = true;
+		}
+		cout << "Press any key...";
+		switch ( waitPressKey() ) {
+		case 'q':
+		case 'Q':
+			return 'q';
+		case 'm':
+		case 'M':
+			return 'm';
+		}
+	}
+	return 0;
+}
+
+int	test_typing_mix() {
+	bool repeat = false;
+	while ( repeat || !test.mixNewWord() ) {
+		clearScreen();
+		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
+
+		switch ( test.getFlag() ) {
+		case 1:
+		case 4:
+			cout << test.getAnswer();
+			break;
+		case 2:
+		case 3:
+			cout << test.getQuestion();
+			break;
+		}
+
+		cout << "\nEnter: ";
+		static char answer[SIZE];
+		cin.getline( answer, SIZE );
+
+#ifdef WINDOWS
+		for ( int i = 0; i < SIZE; i++ ) {
+			if ( answer[i] == 0 ) {
+				break;
+			}
+			answer[i] = charTranslate( answer[i] );
+		}
+#endif
+
+		switch ( test.getFlag() ) {
+		case 1:
+		case 4:
+#ifdef WINDOWS
+			if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
+#elif defined ( LINUX )
+			if ( strcmp( answer, test.getQuestion() ) == 0 ) {
+#endif
+				cout << "Right!\n";
+				repeat = false;
+			} else if ( strcmp( answer, " " ) == 0 ) {
+				cout << "Next\n";
+				repeat = false;
+			} else {
+				cout << "Wrong: " << test.getQuestion() << endl;
+				repeat = true;
+			}
+			break;
+		case 2:
+		case 3:
+#ifdef WINDOWS
+			if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
+#elif defined ( LINUX )
+			if ( strcmp( answer, test.getAnswer() ) == 0 ) {
+#endif
+				cout << "Right!\n";
+				repeat = false;
+			} else if ( strcmp( answer, " " ) == 0 ) {
+				cout << "Next\n";
+				repeat = false;
+			} else {
+				cout << "Wrong: " << test.getAnswer() << endl;
+				repeat = true;
+			}
+			break;
+		}
+
+		cout << "Press any key...";
+		switch ( waitPressKey() ) {
+		case 'q':
+		case 'Q':
+			return 'q';
+		case 'm':
+		case 'M':
+			return 'm';
+		}
+	}
+	return 0;
+}
+
+char charTranslate( const char symb ) {
+	char symb_ = symb;
+	// lowcase
+	if ( symb_ <= -91 && symb_ >= -96 || symb_ <= -81 && symb_ >= -90 ) {
+		return symb_ + 64;
+	} else if ( symb_ == -15 ) {
+		return -72;
+	} else if ( symb_ <= -17 && symb_ >= -32 ) {
+		return symb_ + 16;
+	}
+
+	// highcase
+	if ( symb_ <= -123 && symb_ >= -128 || symb_ <= -97 && symb_ >= -122 ) {
+		return symb_ + 96;
+	} else if ( symb_ == -16 ) {
+		return -72;
+	} else if ( symb_ <= -17 && symb_ >= -32 ) {
+		return symb_ + 16;
+	}
+	return tolower( symb_ );
+}
+
+char* lowerCase( const char *str ) {
+	static char res[SIZE];
+	for ( int i = 0; i < SIZE; i++ ) {
+		if ( str[i] == 0 ) {
+			res[i] = 0;
+			break;
+		}
+		res[i] = tolower( str[i] );
+	}
+	return res;
+}
+
 #ifdef LINUX
-void set_keypress() {
-	struct termios new_settings;
-
+void save_keypress() {
 	tcgetattr( 0, &stored_settings );
+}
 
+void set_keypress_echo() {
+	struct termios new_settings;
+	new_settings = stored_settings;
+
+	/* Disable canonical mode, and set buffer size to 1 byte */
+	new_settings.c_lflag &= ~( ICANON );
+	new_settings.c_cc[VTIME] = 0;
+	new_settings.c_cc[VMIN] = 1;
+	tcsetattr( 0, TCSANOW, &new_settings );
+}
+
+void set_keypress_noecho() {
+	struct termios new_settings;
 	new_settings = stored_settings;
 
 	/* Disable canonical mode, and set buffer size to 1 byte */
@@ -352,7 +650,7 @@ void set_keypress() {
 	tcsetattr( 0, TCSANOW, &new_settings );
 }
 
-void reset_keypress() {
+void load_keypress() {
 	tcsetattr( 0, TCSANOW, &stored_settings );
 }
 #endif
