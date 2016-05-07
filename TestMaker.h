@@ -21,18 +21,19 @@ namespace uns {
 		std::ifstream 	file;	// Подключаемый файл
 
 	public:
-		int			openFile( const char filename[] );
-		void		readFile();
-		void		addQuestion();
-		void		init();
-		int			newWord();
-		int			mixNewWord();
+		void				clearTest();
+		int					openFile( const char filename[] );
+		void				readFile();
+		void				addQuestion();
+		void				init();
+		int					newWord();
+		int					mixNewWord();
 		const	char*		getQuestion();
 		const	char*		getAnswer();
-		int			getCounter() { return counter; }
-		int			getLength() { return length; }
-		char		getFlag() { return flags[index]; }
-		~ucTestMaker();
+		int					getCounter() { return counter; }
+		int					getLength() { return length; }
+		char				getFlag() { return flags[index]; }
+							~ucTestMaker();
 	};
 
 }

@@ -2,6 +2,25 @@
 
 namespace uns {
 	/*
+	* Name: clearTest
+	* Description: Очищает тест
+	*/
+	void ucTestMaker::clearTest() {
+		if ( length != 0 ) {
+			for ( int i = 0; i < length; i++ ) {
+				delete[] mas[i];
+			}
+			delete[] mas;
+			delete[] flags;
+		}
+		mas = NULL;
+		flags = NULL;
+		length = 0;
+		counter = 0;
+		index = -1;
+	}
+
+	/*
 	* Name: openFile
 	* Description: Открывает файл
 	*/
@@ -21,6 +40,7 @@ namespace uns {
 		while ( !file.eof() ) {
 			addQuestion();
 		}
+		file.close();
 	}
 
 	/*
@@ -37,7 +57,7 @@ namespace uns {
 
 		char **tmp;	// Создаем временное хранилище
 		tmp = new char*[length + 1];	// Выделяем в него память больше на 1 чем раньше
-		
+
 		for ( int i = 0; i < length; i++ ) {	// Копируем ранее созданные элементы
 			tmp[i] = mas[i];
 		}
