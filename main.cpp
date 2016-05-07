@@ -35,6 +35,7 @@ char*	lowerCase( const char *str );
 uns::ucTestMaker test;
 
 enum {
+	ST_OPENFILE = -1,
 	ST_MENU = 0,
 	ST_QA,
 	ST_AQ,
@@ -50,7 +51,7 @@ int main( int argc, char **argv ) {
 	//=============================
 	//		Variables
 	//=============================
-	int state = ST_MENU;
+	int state = ST_OPENFILE;
 	int oldState;
 	char isDone = false;
 
@@ -66,6 +67,8 @@ int main( int argc, char **argv ) {
 			waitPressKey();
 			return 1;
 		}
+		test.readFile();
+		state = ST_MENU;
 	} else if ( argc == 3 ) {
 		if ( test.openFile( argv[1] ) ) {
 			cout << "Incorrect file name or the file is not available!\n";
@@ -76,20 +79,8 @@ int main( int argc, char **argv ) {
 		if ( state < 1 || state > 6 ) {
 			state = 11;	// При выборе статуса будет ошибка
 		}
-	} else {
-		clearScreen();
-		cout << "Enter file name: ";
-		char filename[100];
-		cin >> filename;
-		cin.clear();
-		while ( cin.get() != '\n' );
-		if ( test.openFile( filename ) ) {
-			cout << "Incorrect file name or the file is not available!\n";
-			waitPressKey();
-			return 1;
-		}
+		test.readFile();
 	}
-	test.readFile();
 
 	//=============================
 	//		Test
@@ -104,6 +95,26 @@ int main( int argc, char **argv ) {
 #endif
 		/* State test */
 		switch ( state ) {
+			/* Open new file */
+		case ST_OPENFILE:
+#ifdef LINUX
+		set_keypress_echo();
+#endif
+			clearScreen();
+			cout << "Enter file name: ";
+			char filename[100];
+			cin >> filename;
+			cin.clear();
+			while ( cin.get() != '\n' );
+			if ( test.openFile( filename ) ) {
+				cout << "Incorrect file name or the file is not available!\n";
+				waitPressKey();
+				break;
+			}
+			test.clearTest();
+			test.readFile();
+			state = ST_MENU;
+			break;
 			/* Main menu */
 		case ST_MENU:
 			state = typeTest();
@@ -218,6 +229,8 @@ int main( int argc, char **argv ) {
 			clearScreen();
 			cout << "Want try again?";
 			switch ( waitPressKey() ) {
+			case 'n':
+			case 'N':
 			case 'm':
 			case 'M':
 				state = ST_MENU;
@@ -230,8 +243,6 @@ int main( int argc, char **argv ) {
 				break;
 			case 'q':
 			case 'Q':
-			case 'n':
-			case 'N':
 				state = ST_END;
 				break;
 			}
@@ -280,6 +291,7 @@ int	typeTest() {
 	cout << "4. Typing question\n";
 	cout << "5. Typing answer\n";
 	cout << "6. Typing mixing\n";
+	cout << "n. New file\n";
 	cout << "Enter: ";
 	while ( 1 ) {
 		switch ( waitPressKey() ) {
@@ -300,6 +312,10 @@ int	typeTest() {
 			break;
 		case '6':
 			return ST_TYPEMIX;
+			break;
+		case 'n':
+		case 'N':
+			return ST_OPENFILE;
 			break;
 		case 'q':
 		case 'Q':
@@ -430,7 +446,7 @@ int	test_typing_question() {
 		cout << test.getAnswer() << "\nEnter: ";
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
-		
+
 #ifdef WINDOWS
 		for ( int i = 0; i < SIZE; i++ ) {
 			if ( answer[i] == 0 ) {
@@ -438,7 +454,7 @@ int	test_typing_question() {
 			}
 			answer[i] = charTranslate( answer[i] );
 		}
-		
+
 		if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
 #elif defined ( LINUX )
 		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
@@ -446,6 +462,7 @@ int	test_typing_question() {
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
+			cout << test.getQuestion() << endl;
 			cout << "Next\n";
 			repeat = false;
 		} else {
@@ -461,9 +478,9 @@ int	test_typing_question() {
 		case 'M':
 			return 'm';
 		}
-	}
+		}
 	return 0;
-}
+	}
 
 int	test_typing_answer() {
 	bool repeat = false;
@@ -482,14 +499,15 @@ int	test_typing_answer() {
 			}
 			answer[i] = charTranslate( answer[i] );
 		}
-		
-		if ( strcmp( answer, lowerCase ( test.getAnswer() ) ) == 0 ) {
+
+		if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
 #elif defined ( LINUX )
 		if ( strcmp( answer, test.getAnswer() ) == 0 ) {
 #endif
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
+			cout << test.getAnswer() << endl;
 			cout << "Next\n";
 			repeat = false;
 		} else {
@@ -505,9 +523,9 @@ int	test_typing_answer() {
 		case 'M':
 			return 'm';
 		}
-	}
+		}
 	return 0;
-}
+	}
 
 int	test_typing_mix() {
 	bool repeat = false;
@@ -550,6 +568,7 @@ int	test_typing_mix() {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
+				cout << test.getQuestion() << endl;
 				cout << "Next\n";
 				repeat = false;
 			} else {
@@ -567,6 +586,7 @@ int	test_typing_mix() {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
+				cout << test.getAnswer() << endl;
 				cout << "Next\n";
 				repeat = false;
 			} else {
@@ -574,7 +594,7 @@ int	test_typing_mix() {
 				repeat = true;
 			}
 			break;
-		}
+			}
 
 		cout << "Press any key...";
 		switch ( waitPressKey() ) {
@@ -585,9 +605,9 @@ int	test_typing_mix() {
 		case 'M':
 			return 'm';
 		}
-	}
+			}
 	return 0;
-}
+		}
 
 char charTranslate( const char symb ) {
 	char symb_ = symb;
