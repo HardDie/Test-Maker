@@ -49,7 +49,11 @@ namespace uns {
 	*/
 	void ucTestMaker::addQuestion() {
 		char *newStr = new char[SIZE];
+		char *comentPointer = NULL;
 		file.getline( newStr, SIZE );	// —читываем новую строку
+		if ( ( comentPointer = strstr( newStr, "#" ) ) != NULL ) {
+			comentPointer[0] = '\0';
+		}
 		if ( strstr( newStr, " - " ) == NULL ) {
 			delete[] newStr;
 			return;
