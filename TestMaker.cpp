@@ -6,16 +6,10 @@ namespace uns {
 	* Description: Очищает тест
 	*/
 	void ucTestMaker::clearTest() {
-		if ( length != 0 ) {
-			for ( int i = 0; i < length; i++ ) {
-				delete[] mas[i];
-			}
-			delete[] mas;
-			delete[] flags;
+		for ( int i = 0; i < data.size(); i++ ) {
+			delete[] data[i].string;
 		}
-		mas = NULL;
-		flags = NULL;
-		length = 0;
+		data.clear();
 		counter = 0;
 		index = -1;
 	}
@@ -48,32 +42,22 @@ namespace uns {
 	* Description: Считывает новую строку в конец массива
 	*/
 	void ucTestMaker::addQuestion() {
-		char *newStr = new char[SIZE];
+		usData_t tmpData;
+		tmpData.string = new char[SIZE];
 		char *comentPointer = NULL;
-		file.getline( newStr, SIZE );	// Считываем новую строку
-		if ( ( comentPointer = strstr( newStr, "#" ) ) != NULL ) {
+		file.getline( tmpData.string, SIZE );	// Считываем новую строку
+		if ( ( comentPointer = strstr( tmpData.string, "#" ) ) != NULL ) {	// Убираем закомментированное
 			comentPointer[0] = '\0';
 		}
-		if ( strstr( newStr, " - " ) == NULL ) {
-			delete[] newStr;
+		if ( strstr( tmpData.string, " - " ) == NULL ) {	// Проверяем на верность строки
+			delete[] tmpData.string;
 			return;
 		}
+		if ( tmpData.string[strlen( tmpData.string ) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
+			tmpData.string[strlen( tmpData.string ) - 1] = '\0';
+		}
 
-		char **tmp;	// Создаем временное хранилище
-		tmp = new char*[length + 1];	// Выделяем в него память больше на 1 чем раньше
-
-		for ( int i = 0; i < length; i++ ) {	// Копируем ранее созданные элементы
-			tmp[i] = mas[i];
-		}
-		if ( mas != NULL ) {
-			delete[] mas;	// Очищаем старую память
-		}
-		tmp[length] = newStr;
-		if ( tmp[length][strlen( tmp[length] ) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
-			tmp[length][strlen( tmp[length] ) - 1] = '\0';
-		}
-		length++;
-		mas = tmp;
+		data.push_back( tmpData );
 	}
 
 	/*
@@ -82,11 +66,8 @@ namespace uns {
 	*/
 	void ucTestMaker::init() {
 		srand( ( unsigned int ) time( NULL ) );
-		if ( flags == NULL ) {
-			flags = new char[length];
-		}
-		for ( int i = 0; i < length; i++ ) {
-			flags[i] = 0;
+		for ( int i = 0; i < data.size(); i++ ) {
+			data[i].flag = 0;
 		}
 		counter = 0;
 	}
@@ -96,11 +77,11 @@ namespace uns {
 	* Description: Выбирает новое слово для вопроса
 	*/
 	int ucTestMaker::newWord() {
-		if ( counter == length ) {
+		if ( counter == data.size() ) {
 			return 1;
 		}
-		while ( flags[index = rand() % length] == 1 );
-		flags[index] = 1;
+		while ( data[index = rand() % data.size()].flag == 1 );
+		data[index].flag = 1;
 		counter++;
 		return 0;
 	}
@@ -110,16 +91,16 @@ namespace uns {
 	* Description: Выбирает новое слово для вопроса с учетом двух вопросов
 	*/
 	int ucTestMaker::mixNewWord() {
-		if ( counter == ( 2 * length ) ) {
+		if ( counter == ( 2 * data.size() ) ) {
 			return 1;
 		}
-		while ( flags[index = rand() % length] == 3 || flags[index] == 4 );
-		if ( flags[index] == 0 ) {
-			flags[index] = rand() % 2 + 1;
-		} else if ( flags[index] == 1 ) {
-			flags[index] = 3;
-		} else if ( flags[index] == 2 ) {
-			flags[index] = 4;
+		while ( data[index = rand() % data.size()].flag == 3 || data[index].flag == 4 );
+		if ( data[index].flag == 0 ) {
+			data[index].flag = rand() % 2 + 1;
+		} else if ( data[index].flag == 1 ) {
+			data[index].flag = 3;
+		} else if ( data[index].flag == 2 ) {
+			data[index].flag = 4;
 		}
 		counter++;
 		return 0;
@@ -131,11 +112,11 @@ namespace uns {
 	*/
 	const char*	ucTestMaker::getQuestion() {
 		for ( int i = 0; i < SIZE; i++ ) {
-			if ( mas[index][i] == '-' && mas[index][i - 1] == ' ' && mas[index][i + 1] == ' ' ) {
+			if ( data[index].string[i] == '-' && data[index].string[i - 1] == ' ' && data[index].string[i + 1] == ' ' ) {
 				str[i - 1] = '\0';
 				break;
 			}
-			str[i] = mas[index][i];
+			str[i] = data[index].string[i];
 		}
 		return str;
 	}
@@ -146,28 +127,25 @@ namespace uns {
 	*/
 	const char*	ucTestMaker::getAnswer() {
 		int i = 0;
-		while ( !( mas[index][i] == '-' && mas[index][i - 1] == ' ' && mas[index][i + 1] == ' ' ) ) {
+		while ( !( data[index].string[i] == '-' && data[index].string[i - 1] == ' ' && data[index].string[i + 1] == ' ' ) ) {
 			i++;
 		}
 		i++;
 		for ( int j = 0; j < SIZE; j++ ) {
-			if ( mas[index][++i] == '\0' ) {
+			if ( data[index].string[++i] == '\0' ) {
 				str[j] = '\0';
 				break;
 			}
-			str[j] = mas[index][i];
+			str[j] = data[index].string[i];
 		}
 		return str;
 	}
 
 	ucTestMaker::~ucTestMaker() {
-		if ( length != 0 ) {
-			for ( int i = 0; i < length; i++ ) {
-				delete[] mas[i];
-			}
-			delete[] mas;
-			delete[] flags;
+		for ( int i = 0; i < data.size(); i++ ) {
+			delete[] data[i].string;
 		}
+		data.clear();
 	}
 
 }
