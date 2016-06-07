@@ -98,7 +98,7 @@ int main( int argc, char **argv ) {
 			/* Open new file */
 		case ST_OPENFILE:
 #ifdef LINUX
-		set_keypress_echo();
+			set_keypress_echo();
 #endif
 			clearScreen();
 			cout << "Enter file name: ";
