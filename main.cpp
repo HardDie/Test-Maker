@@ -1,11 +1,11 @@
-#define LINUX
+#define _WIN32
 
 #include <iostream>
 #include "TestMaker.h"
 
 using namespace std;
 
-#ifdef LINUX
+#ifdef __linux__
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -16,7 +16,7 @@ void	set_keypress_noecho();
 void	load_keypress();
 
 static struct termios stored_settings;
-#elif defined( WINDOWS )
+#elif defined( _WIN32 )
 #include <conio.h>
 #endif
 
@@ -85,19 +85,19 @@ int main( int argc, char **argv ) {
 	//=============================
 	//		Test
 	//=============================
-#ifdef LINUX
+#ifdef __linux__
 	save_keypress();
 #endif
 
 	while ( !isDone ) {
-#ifdef LINUX
+#ifdef __linux__
 		set_keypress_noecho();
 #endif
 		/* State test */
 		switch ( state ) {
 			/* Open new file */
 		case ST_OPENFILE:
-#ifdef LINUX
+#ifdef __linux__
 			set_keypress_echo();
 #endif
 			clearScreen();
@@ -169,7 +169,7 @@ int main( int argc, char **argv ) {
 			break;
 			/* Typing question */
 		case ST_TYPEQUESTION:
-#ifdef LINUX
+#ifdef __linux__
 			set_keypress_echo();
 #endif
 			test.init();
@@ -188,7 +188,7 @@ int main( int argc, char **argv ) {
 			break;
 			/* Typing answer */
 		case ST_TYPEANSWER:
-#ifdef LINUX
+#ifdef __linux__
 			set_keypress_echo();
 #endif
 			test.init();
@@ -207,7 +207,7 @@ int main( int argc, char **argv ) {
 			break;
 			/* Typing mix */
 		case ST_TYPEMIX:
-#ifdef LINUX
+#ifdef __linux__
 			set_keypress_echo();
 #endif
 			test.init();
@@ -260,24 +260,24 @@ int main( int argc, char **argv ) {
 		}
 	}
 
-#ifdef LINUX
+#ifdef __linux__
 	load_keypress();
 #endif
 	return 0;
 }
 
 int waitPressKey() {
-#ifdef LINUX
+#ifdef __linux__
 	return getc( stdin );
-#elif defined( WINDOWS )
+#elif defined( _WIN32 )
 	return _getch();
 #endif
 }
 
 void clearScreen() {
-#ifdef LINUX
+#ifdef __linux__
 	system( "clear" );
-#elif defined( WINDOWS )
+#elif defined( _WIN32 )
 	system( "cls" );
 #endif
 }
@@ -447,7 +447,7 @@ int	test_typing_question() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef WINDOWS
+#ifdef _WIN32
 		for ( int i = 0; i < SIZE; i++ ) {
 			if ( answer[i] == 0 ) {
 				break;
@@ -456,7 +456,7 @@ int	test_typing_question() {
 		}
 
 		if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
-#elif defined ( LINUX )
+#elif defined ( __linux__ )
 		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
 #endif
 			cout << "Right!\n";
@@ -492,7 +492,7 @@ int	test_typing_answer() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef WINDOWS
+#ifdef _WIN32
 		for ( int i = 0; i < SIZE; i++ ) {
 			if ( answer[i] == 0 ) {
 				break;
@@ -501,7 +501,7 @@ int	test_typing_answer() {
 		}
 
 		if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
-#elif defined ( LINUX )
+#elif defined ( __linux__ )
 		if ( strcmp( answer, test.getAnswer() ) == 0 ) {
 #endif
 			cout << "Right!\n";
@@ -548,7 +548,7 @@ int	test_typing_mix() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef WINDOWS
+#ifdef _WIN32
 		for ( int i = 0; i < SIZE; i++ ) {
 			if ( answer[i] == 0 ) {
 				break;
@@ -560,9 +560,9 @@ int	test_typing_mix() {
 		switch ( test.getFlag() ) {
 		case 1:
 		case 4:
-#ifdef WINDOWS
+#ifdef _WIN32
 			if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
-#elif defined ( LINUX )
+#elif defined ( __linux__ )
 			if ( strcmp( answer, test.getQuestion() ) == 0 ) {
 #endif
 				cout << "Right!\n";
@@ -578,9 +578,9 @@ int	test_typing_mix() {
 			break;
 		case 2:
 		case 3:
-#ifdef WINDOWS
+#ifdef _WIN32
 			if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
-#elif defined ( LINUX )
+#elif defined ( __linux__ )
 			if ( strcmp( answer, test.getAnswer() ) == 0 ) {
 #endif
 				cout << "Right!\n";
@@ -643,7 +643,7 @@ char* lowerCase( const char *str ) {
 	return res;
 }
 
-#ifdef LINUX
+#ifdef __linux__
 void save_keypress() {
 	tcgetattr( 0, &stored_settings );
 }
