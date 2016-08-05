@@ -1,12 +1,18 @@
 #define _WIN32
 
 #include <iostream>
+#include <stdio.h>
 #include "TestMaker.h"
+
+#ifdef __linux__
+	#define print printf
+#elif defined ( _WIN32 )
+	#define print printf
+#endif
 
 using namespace std;
 
 #ifdef __linux__
-#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 
@@ -63,7 +69,7 @@ int main( int argc, char **argv ) {
 
 	if ( argc == 2 ) {
 		if ( test.openFile( argv[1] ) ) {
-			cout << "Incorrect file name or the file is not available!\n";
+			print( "Incorrect file name or the file is not available!\n" );
 			waitPressKey();
 			return 1;
 		}
@@ -71,7 +77,7 @@ int main( int argc, char **argv ) {
 		state = ST_MENU;
 	} else if ( argc == 3 ) {
 		if ( test.openFile( argv[1] ) ) {
-			cout << "Incorrect file name or the file is not available!\n";
+			print( "Incorrect file name or the file is not available!\n" );
 			waitPressKey();
 			return 1;
 		}
@@ -101,13 +107,13 @@ int main( int argc, char **argv ) {
 			set_keypress_echo();
 #endif
 			clearScreen();
-			cout << "Enter file name: ";
+			print( "Enter file name: " );
 			char filename[100];
 			cin >> filename;
 			cin.clear();
 			while ( cin.get() != '\n' );
 			if ( test.openFile( filename ) ) {
-				cout << "Incorrect file name or the file is not available!\n";
+				print( "Incorrect file name or the file is not available!\n" );
 				waitPressKey();
 				break;
 			}
@@ -227,7 +233,7 @@ int main( int argc, char **argv ) {
 			/* Try again? */
 		case ST_TRY:
 			clearScreen();
-			cout << "Want try again?";
+			print( "Want try again?" );
 			switch ( waitPressKey() ) {
 			case 'n':
 			case 'N':
@@ -250,11 +256,11 @@ int main( int argc, char **argv ) {
 			/* End game */
 		case ST_END:
 			isDone = true;
-			cout << endl;
+			print( "\n" );
 			break;
 			/* Error */
 		default:
-			cout << "Wrong argument test type\n";
+			print( "Wrong argument test type\n" );
 			state = ST_END;
 			break;
 		}
@@ -284,15 +290,15 @@ void clearScreen() {
 
 int	typeTest() {
 	clearScreen();
-	cout << "Choose test type:\n";
-	cout << "1. Question -> Answer\n";
-	cout << "2. Answer -> Question\n";
-	cout << "3. Mixing\n";
-	cout << "4. Typing question\n";
-	cout << "5. Typing answer\n";
-	cout << "6. Typing mixing\n";
-	cout << "n. New file\n";
-	cout << "Enter: ";
+	print( "Choose test type:\n" );
+	print( "1. Question -> Answer\n" );
+	print( "2. Answer -> Question\n" );
+	print( "3. Mixing\n" );
+	print( "4. Typing question\n" );
+	print( "5. Typing answer\n" );
+	print( "6. Typing mixing\n" );
+	print( "n. New file\n" );
+	print( "Enter: " );
 	while ( 1 ) {
 		switch ( waitPressKey() ) {
 		case '1':
@@ -332,9 +338,9 @@ int	typeTest() {
 int test_question_answer() {
 	while ( !test.newWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
-		cout << test.getQuestion();
+		print( "%s", test.getQuestion() );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -344,8 +350,8 @@ int test_question_answer() {
 			return 'm';
 		}
 
-		cout << " - " << test.getAnswer() << endl;
-		cout << "Press any key...";
+		print( " - %s\n", test.getAnswer() );
+		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -361,9 +367,9 @@ int test_question_answer() {
 int test_answer_question() {
 	while ( !test.newWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
-		cout << test.getAnswer();
+		print( "%s", test.getAnswer() );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -373,8 +379,8 @@ int test_answer_question() {
 			return 'm';
 		}
 
-		cout << " - " << test.getQuestion() << endl;
-		cout << "Press any key...";
+		print( " - %s\n", test.getQuestion() );
+		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -390,16 +396,16 @@ int test_answer_question() {
 int test_mixing() {
 	while ( !test.mixNewWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() * 2 );
 
 		switch ( test.getFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getAnswer();
+			print( "%s", test.getAnswer() );
 			break;
 		case 2:
 		case 3:
-			cout << test.getQuestion();
+			print( "%s", test.getQuestion() );
 			break;
 		}
 
@@ -412,18 +418,18 @@ int test_mixing() {
 			return 'm';
 		}
 
-		cout << " - ";
+		print( " - " );
 		switch ( test.getFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getQuestion();
+			print( "%s", test.getQuestion() );
 			break;
 		case 2:
 		case 3:
-			cout << test.getAnswer();
+			print( "%s", test.getAnswer() );
 			break;
 		}
-		cout << endl << "Press any key...";
+		print( "\nPress any key..." );
 
 		switch ( waitPressKey() ) {
 		case 'q':
@@ -441,9 +447,9 @@ int	test_typing_question() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
-		cout << test.getAnswer() << "\nEnter: ";
+		print( "%s\nEnter: ", test.getAnswer() );
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
@@ -459,17 +465,17 @@ int	test_typing_question() {
 #elif defined ( __linux__ )
 		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
 #endif
-			cout << "Right!\n";
+			print( "Right!\n" );
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
-			cout << test.getQuestion() << endl;
-			cout << "Next\n";
+			print( "%s\n", test.getQuestion() );
+			print( "Next\n" );
 			repeat = false;
 		} else {
-			cout << "Wrong: " << test.getQuestion() << endl;
+			print( "Wrong: %s\n", test.getQuestion() );
 			repeat = true;
 		}
-		cout << "Press any key...";
+		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -486,9 +492,9 @@ int	test_typing_answer() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
-		cout << test.getQuestion() << "\nEnter: ";
+		print( "%s\nEnter: ", test.getQuestion() );
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
@@ -504,17 +510,17 @@ int	test_typing_answer() {
 #elif defined ( __linux__ )
 		if ( strcmp( answer, test.getAnswer() ) == 0 ) {
 #endif
-			cout << "Right!\n";
+			print( "Right!\n" );
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
-			cout << test.getAnswer() << endl;
-			cout << "Next\n";
+			print( "%s\n", test.getAnswer() );
+			print( "Next\n" );
 			repeat = false;
 		} else {
-			cout << "Wrong: " << test.getAnswer() << endl;
+			print( "Wrong: %s\n", test.getAnswer() );
 			repeat = true;
 		}
-		cout << "Press any key...";
+		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
@@ -531,20 +537,20 @@ int	test_typing_mix() {
 	bool repeat = false;
 	while ( repeat || !test.mixNewWord() ) {
 		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
+		print( "%d/%d\n", test.getCounter(), test.getLength() * 2 );
 
 		switch ( test.getFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getAnswer();
+			print( "%s", test.getAnswer() );
 			break;
 		case 2:
 		case 3:
-			cout << test.getQuestion();
+			print( "%s", test.getQuestion() );
 			break;
 		}
 
-		cout << "\nEnter: ";
+		print( "\nEnter: " );
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
@@ -565,14 +571,14 @@ int	test_typing_mix() {
 #elif defined ( __linux__ )
 			if ( strcmp( answer, test.getQuestion() ) == 0 ) {
 #endif
-				cout << "Right!\n";
+				print( "Right!\n" );
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
-				cout << test.getQuestion() << endl;
-				cout << "Next\n";
+				print( "%s\n", test.getQuestion() );
+				print( "Next\n" );
 				repeat = false;
 			} else {
-				cout << "Wrong: " << test.getQuestion() << endl;
+				print( "Wrong: %s\n", test.getQuestion() );
 				repeat = true;
 			}
 			break;
@@ -583,20 +589,20 @@ int	test_typing_mix() {
 #elif defined ( __linux__ )
 			if ( strcmp( answer, test.getAnswer() ) == 0 ) {
 #endif
-				cout << "Right!\n";
+				print( "Right!\n" );
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
-				cout << test.getAnswer() << endl;
-				cout << "Next\n";
+				print( "%s\n", test.getAnswer() );
+				print( "Next\n" );
 				repeat = false;
 			} else {
-				cout << "Wrong: " << test.getAnswer() << endl;
+				print( "Wrong: %s\n", test.getAnswer() );
 				repeat = true;
 			}
 			break;
 			}
 
-		cout << "Press any key...";
+		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
 		case 'Q':
