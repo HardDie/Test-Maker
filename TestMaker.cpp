@@ -3,7 +3,7 @@
 namespace uns {
 	/*
 	* Name: clearTest
-	* Description: Очищает тест
+	* Description: РћС‡РёС‰Р°РµС‚ С‚РµСЃС‚
 	*/
 	void ucTestMaker::clearTest() {
 		for ( int i = 0; i < data.size(); i++ ) {
@@ -16,7 +16,7 @@ namespace uns {
 
 	/*
 	* Name: openFile
-	* Description: Открывает файл
+	* Description: РћС‚РєСЂС‹РІР°РµС‚ С„Р°Р№Р»
 	*/
 	int ucTestMaker::openFile( const char filename[] ) {
 		file.open( filename );
@@ -28,7 +28,7 @@ namespace uns {
 
 	/*
 	* Name: readFile
-	* Description: Считывает все строки из файла
+	* Description: РЎС‡РёС‚С‹РІР°РµС‚ РІСЃРµ СЃС‚СЂРѕРєРё РёР· С„Р°Р№Р»Р°
 	*/
 	void ucTestMaker::readFile() {
 		while ( !file.eof() ) {
@@ -39,21 +39,21 @@ namespace uns {
 
 	/*
 	* Name: addQuestion
-	* Description: Считывает новую строку в конец массива
+	* Description: РЎС‡РёС‚С‹РІР°РµС‚ РЅРѕРІСѓСЋ СЃС‚СЂРѕРєСѓ РІ РєРѕРЅРµС† РјР°СЃСЃРёРІР°
 	*/
 	void ucTestMaker::addQuestion() {
 		usData_t tmpData;
 		tmpData.string = new char[SIZE];
 		char *comentPointer = NULL;
-		file.getline( tmpData.string, SIZE );	// Считываем новую строку
-		if ( ( comentPointer = strstr( tmpData.string, "#" ) ) != NULL ) {	// Убираем закомментированное
+		file.getline( tmpData.string, SIZE );	// РЎС‡РёС‚С‹РІР°РµРј РЅРѕРІСѓСЋ СЃС‚СЂРѕРєСѓ
+		if ( ( comentPointer = strstr( tmpData.string, "#" ) ) != NULL ) {	// РЈР±РёСЂР°РµРј Р·Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°РЅРЅРѕРµ
 			comentPointer[0] = '\0';
 		}
-		if ( strstr( tmpData.string, " - " ) == NULL ) {	// Проверяем на верность строки
+		if ( strstr( tmpData.string, " - " ) == NULL ) {	// РџСЂРѕРІРµСЂСЏРµРј РЅР° РІРµСЂРЅРѕСЃС‚СЊ СЃС‚СЂРѕРєРё
 			delete[] tmpData.string;
 			return;
 		}
-		if ( tmpData.string[strlen( tmpData.string ) - 1] == 13 ) {	// Ставим символ окончания строки во все строки кроме последней
+		if ( tmpData.string[strlen( tmpData.string ) - 1] == 13 ) {	// РЎС‚Р°РІРёРј СЃРёРјРІРѕР» РѕРєРѕРЅС‡Р°РЅРёСЏ СЃС‚СЂРѕРєРё РІРѕ РІСЃРµ СЃС‚СЂРѕРєРё РєСЂРѕРјРµ РїРѕСЃР»РµРґРЅРµР№
 			tmpData.string[strlen( tmpData.string ) - 1] = '\0';
 		}
 
@@ -62,7 +62,7 @@ namespace uns {
 
 	/*
 	* Name: init
-	* Description: Сбрасывает все флаги слов
+	* Description: РЎР±СЂР°СЃС‹РІР°РµС‚ РІСЃРµ С„Р»Р°РіРё СЃР»РѕРІ
 	*/
 	void ucTestMaker::init() {
 		srand( ( unsigned int ) time( NULL ) );
@@ -74,7 +74,7 @@ namespace uns {
 
 	/*
 	* Name: newWord
-	* Description: Выбирает новое слово для вопроса
+	* Description: Р’С‹Р±РёСЂР°РµС‚ РЅРѕРІРѕРµ СЃР»РѕРІРѕ РґР»СЏ РІРѕРїСЂРѕСЃР°
 	*/
 	int ucTestMaker::newWord() {
 		if ( counter == data.size() ) {
@@ -88,7 +88,7 @@ namespace uns {
 
 	/*
 	* Name: mixNewWord
-	* Description: Выбирает новое слово для вопроса с учетом двух вопросов
+	* Description: Р’С‹Р±РёСЂР°РµС‚ РЅРѕРІРѕРµ СЃР»РѕРІРѕ РґР»СЏ РІРѕРїСЂРѕСЃР° СЃ СѓС‡РµС‚РѕРј РґРІСѓС… РІРѕРїСЂРѕСЃРѕРІ
 	*/
 	int ucTestMaker::mixNewWord() {
 		if ( counter == ( 2 * data.size() ) ) {
@@ -108,7 +108,7 @@ namespace uns {
 
 	/*
 	* Name: getQuestion
-	* Description: Возвращает вопрос
+	* Description: Р’РѕР·РІСЂР°С‰Р°РµС‚ РІРѕРїСЂРѕСЃ
 	*/
 	const char*	ucTestMaker::getQuestion() {
 		for ( int i = 0; i < SIZE; i++ ) {
@@ -123,7 +123,7 @@ namespace uns {
 
 	/*
 	* Name: getQuestion
-	* Description: Возвращает ответ
+	* Description: Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕС‚РІРµС‚
 	*/
 	const char*	ucTestMaker::getAnswer() {
 		int i = 0;

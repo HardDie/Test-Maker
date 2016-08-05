@@ -1,6 +1,6 @@
 comp=g++ -std=c++11
 dir=bin
-obj=	$(dir)/main.o \
+obj=	$(dir)/Main.o \
 		$(dir)/TestMaker.o
 
 default : checkBin $(dir)/TestMaker

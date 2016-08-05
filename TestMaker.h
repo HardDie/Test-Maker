@@ -11,18 +11,18 @@ const int SIZE = 1024;
 
 namespace uns {
 
-	struct usData_t {	// Структура одного объекта
+	struct usData_t {	// РЎС‚СЂСѓРєС‚СѓСЂР° РѕРґРЅРѕРіРѕ РѕР±СЉРµРєС‚Р°
 		char *	string;
 		char	flag;
 	};
 
 	class ucTestMaker {
 	private:
-		vector< usData_t >	data;	// Вектор данных
-		int					counter = 0;	// Количество выведеных строк
-		int					index = -1;	// Номер текущей строки
-		char				str[SIZE];	// Возвращаемая строка
-		std::ifstream 		file;	// Подключаемый файл
+		vector< usData_t >	data;	// Р’РµРєС‚РѕСЂ РґР°РЅРЅС‹С…
+		int					counter = 0;	// РљРѕР»РёС‡РµСЃС‚РІРѕ РІС‹РІРµРґРµРЅС‹С… СЃС‚СЂРѕРє
+		int					index = -1;	// РќРѕРјРµСЂ С‚РµРєСѓС‰РµР№ СЃС‚СЂРѕРєРё
+		char				str[SIZE];	// Р’РѕР·РІСЂР°С‰Р°РµРјР°СЏ СЃС‚СЂРѕРєР°
+		std::ifstream 		file;	// РџРѕРґРєР»СЋС‡Р°РµРјС‹Р№ С„Р°Р№Р»
 		
 	public:
 		void				clearTest();
