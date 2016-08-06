@@ -4,26 +4,36 @@
 #include <stdio.h>
 #include "TestMaker.h"
 
+using namespace std;
+
+#ifdef __linux__
+	#include <ncurses.h>
+#elif defined ( _WIN32 )
+	#include <conio.h>
+#endif
+
 #ifdef __linux__
 	#define print printf
 #elif defined ( _WIN32 )
 	#define print printf
 #endif
 
-using namespace std;
+#ifdef __linux__
+	#define readline( str, size ) getnstr( str, size )
+#elif defined ( _WIN32 )
+	#define readline( str, size ) fgets( str, size, stdin )
+#endif
 
 #ifdef __linux__
-#include <stdlib.h>
-#include <termios.h>
+	#include <stdlib.h>
+	#include <termios.h>
 
-void	save_keypress();
-void	set_keypress_echo();
-void	set_keypress_noecho();
-void	load_keypress();
+	void	save_keypress();
+	void	set_keypress_echo();
+	void	set_keypress_noecho();
+	void	load_keypress();
 
-static struct termios stored_settings;
-#elif defined( _WIN32 )
-#include <conio.h>
+	static struct termios stored_settings;
 #endif
 
 int		waitPressKey();
