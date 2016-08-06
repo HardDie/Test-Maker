@@ -9,7 +9,7 @@ checkBin :
 	@ if [ ! -d $(dir) ]; then mkdir $(dir); fi
 
 $(dir)/TestMaker : $(obj)
-	$(comp) $(obj) -o $(dir)/TestMaker -lncurses
+	$(comp) $(obj) -o $(dir)/TestMaker
 
 $(dir)/%.o : %.cpp
 	$(comp) -c $< -o $@
