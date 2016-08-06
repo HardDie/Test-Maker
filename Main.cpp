@@ -7,33 +7,33 @@
 using namespace std;
 
 #ifdef __linux__
-	#include <ncurses.h>
+#include <ncurses.h>
 #elif defined ( _WIN32 )
-	#include <conio.h>
+#include <conio.h>
 #endif
 
 #ifdef __linux__
-	#define print printf
+#define print printf
 #elif defined ( _WIN32 )
-	#define print printf
+#define print printf
 #endif
 
 #ifdef __linux__
-	#define readline( str, size ) getnstr( str, size - 1 )
+#define readline( str, size ) getnstr( str, size - 1 )
 #elif defined ( _WIN32 )
-	#define readline( str, size ) fgets( str, size, stdin )
+#define readline( str, size ) fgets( str, size, stdin )
 #endif
 
 #ifdef __linux__
-	#include <stdlib.h>
-	#include <termios.h>
+#include <stdlib.h>
+#include <termios.h>
 
-	void	save_keypress();
-	void	set_keypress_echo();
-	void	set_keypress_noecho();
-	void	load_keypress();
+void	save_keypress();
+void	set_keypress_echo();
+void	set_keypress_noecho();
+void	load_keypress();
 
-	static struct termios stored_settings;
+static struct termios stored_settings;
 #endif
 
 int		waitPressKey();
@@ -109,9 +109,9 @@ int main( int argc, char **argv ) {
 		switch ( state ) {
 			/* Open new file */
 		case ST_OPENFILE:
-			#ifdef __linux__
-				load_keypress();
-			#endif
+#ifdef __linux__
+			load_keypress();
+#endif
 			clearScreen();
 			print( "Enter file name: " );
 			char filename[100];
@@ -129,16 +129,16 @@ int main( int argc, char **argv ) {
 			break;
 			/* Main menu */
 		case ST_MENU:
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
+#ifdef __linux__
+			set_keypress_noecho();
+#endif
 			state = typeTest();
 			break;
 			/* Question -> Answer */
 		case ST_QA:
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
+#ifdef __linux__
+			set_keypress_noecho();
+#endif
 			test.init();
 			switch ( test_question_answer() ) {
 			case 'q':
@@ -155,9 +155,9 @@ int main( int argc, char **argv ) {
 			break;
 			/* Answer -> Question */
 		case ST_AQ:
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
+#ifdef __linux__
+			set_keypress_noecho();
+#endif
 			test.init();
 			switch ( test_answer_question() ) {
 			case 'q':
@@ -174,9 +174,9 @@ int main( int argc, char **argv ) {
 			break;
 			/* Mix */
 		case ST_MIX:
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
+#ifdef __linux__
+			set_keypress_noecho();
+#endif
 			test.init();
 			switch ( test_mixing() ) {
 			case 'q':
@@ -209,9 +209,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Typing answer */
 		case ST_TYPEANSWER:
-			#ifdef __linux__
-				load_keypress();
-			#endif
 			test.init();
 			switch ( test_typing_answer() ) {
 			case 'q':
@@ -228,9 +225,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Typing mix */
 		case ST_TYPEMIX:
-			#ifdef __linux__
-				load_keypress();
-			#endif
 			test.init();
 			switch ( test_typing_mix() ) {
 			case 'q':
@@ -247,9 +241,9 @@ int main( int argc, char **argv ) {
 			break;
 			/* Try again? */
 		case ST_TRY:
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
+#ifdef __linux__
+			set_keypress_noecho();
+#endif
 			clearScreen();
 			print( "Want try again?" );
 			switch ( waitPressKey() ) {
@@ -284,9 +278,9 @@ int main( int argc, char **argv ) {
 		}
 	}
 
-	#ifdef __linux__
-		load_keypress();
-	#endif
+#ifdef __linux__
+	load_keypress();
+#endif
 	return 0;
 }
 
@@ -464,9 +458,9 @@ int test_mixing() {
 int	test_typing_question() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
-		#ifdef __linux__
-			load_keypress();
-		#endif
+#ifdef __linux__
+		load_keypress();
+#endif
 		clearScreen();
 		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
@@ -474,40 +468,40 @@ int	test_typing_question() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-		#ifdef _WIN32
-			for ( int i = 0; i < SIZE; i++ ) {
-				if ( answer[i] == 0 ) {
-					break;
-				}
-				answer[i] = charTranslate( answer[i] );
+#ifdef _WIN32
+		for ( int i = 0; i < SIZE; i++ ) {
+			if ( answer[i] == 0 ) {
+				break;
 			}
+			answer[i] = charTranslate( answer[i] );
+		}
 
-			if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
-		#elif defined ( __linux__ )
-			if ( strcmp( answer, test.getQuestion() ) == 0 ) {
-		#endif
-				print( "Right!\n" );
-				repeat = false;
-			} else if ( strcmp( answer, " " ) == 0 ) {
-				print( "%s\n", test.getQuestion() );
-				print( "Next\n" );
-				repeat = false;
-			} else {
-				print( "Wrong: %s\n", test.getQuestion() );
-				repeat = true;
-			}
-			print( "Press any key..." );
-			#ifdef __linux__
-				set_keypress_noecho();
-			#endif
-			switch ( waitPressKey() ) {
-				case 'q':
-				case 'Q':
-					return 'q';
-				case 'm':
-				case 'M':
-					return 'm';
-			}
+		if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
+#elif defined ( __linux__ )
+		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
+#endif
+			print( "Right!\n" );
+			repeat = false;
+		} else if ( strcmp( answer, " " ) == 0 ) {
+			print( "%s\n", test.getQuestion() );
+			print( "Next\n" );
+			repeat = false;
+		} else {
+			print( "Wrong: %s\n", test.getQuestion() );
+			repeat = true;
+		}
+		print( "Press any key..." );
+#ifdef __linux__
+		set_keypress_noecho();
+#endif
+		switch ( waitPressKey() ) {
+		case 'q':
+		case 'Q':
+			return 'q';
+		case 'm':
+		case 'M':
+			return 'm';
+		}
 	}
 	return 0;
 }
@@ -515,9 +509,9 @@ int	test_typing_question() {
 int	test_typing_answer() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
-		#ifdef __linux__
-			load_keypress();
-		#endif
+#ifdef __linux__
+		load_keypress();
+#endif
 		clearScreen();
 		print( "%d/%d\n", test.getCounter(), test.getLength() );
 
@@ -547,9 +541,9 @@ int	test_typing_answer() {
 			print( "Wrong: %s\n", test.getAnswer() );
 			repeat = true;
 		}
-		#ifdef __linux__
-			set_keypress_noecho();
-		#endif
+#ifdef __linux__
+		set_keypress_noecho();
+#endif
 		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
@@ -559,16 +553,16 @@ int	test_typing_answer() {
 		case 'M':
 			return 'm';
 		}
-		}
-	return 0;
 	}
+	return 0;
+}
 
 int	test_typing_mix() {
 	bool repeat = false;
 	while ( repeat || !test.mixNewWord() ) {
-		#ifdef __linux__
-			load_keypress();
-		#endif
+#ifdef __linux__
+		load_keypress();
+#endif
 		clearScreen();
 		print( "%d/%d\n", test.getCounter(), test.getLength() * 2 );
 
@@ -633,11 +627,11 @@ int	test_typing_mix() {
 				repeat = true;
 			}
 			break;
-			}
+		}
 
-		#ifdef __linux__
-			set_keypress_noecho();
-		#endif
+#ifdef __linux__
+		set_keypress_noecho();
+#endif
 		print( "Press any key..." );
 		switch ( waitPressKey() ) {
 		case 'q':
@@ -647,9 +641,9 @@ int	test_typing_mix() {
 		case 'M':
 			return 'm';
 		}
-			}
+	}
 	return 0;
-		}
+}
 
 char charTranslate( const char symb ) {
 	char symb_ = symb;
