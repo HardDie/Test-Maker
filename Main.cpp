@@ -256,7 +256,7 @@ int main( int argc, char **argv ) {
 			/* End game */
 		case ST_END:
 			isDone = true;
-			print( "\n" );
+			clearScreen();
 			break;
 			/* Error */
 		default:
