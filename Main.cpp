@@ -19,7 +19,7 @@ using namespace std;
 #endif
 
 #ifdef __linux__
-	#define readline( str, size ) getnstr( str, size )
+	#define readline( str, size ) getnstr( str, size - 1 )
 #elif defined ( _WIN32 )
 	#define readline( str, size ) fgets( str, size, stdin )
 #endif
