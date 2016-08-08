@@ -62,8 +62,9 @@ int main( int argc, char **argv ) {
 	//=============================
 	//		Initilization
 	//=============================
+#ifdef _WIN32
 	setlocale( LC_ALL, "Russian" );
-#ifdef __linux__
+#elif defined( __linux__ )
 	save_keypress();
 #endif
 
