@@ -26,12 +26,12 @@ static struct termios stored_settings;
 int		waitPressKey();
 void	clearScreen();
 int		typeTest();
-int		test_question_answer();
-int		test_answer_question();
-int		test_mixing();
-int		test_typing_question();
-int		test_typing_answer();
-int		test_typing_mix();
+char	test_question_answer();
+char	test_answer_question();
+char	test_mixing();
+char	test_typing_question();
+char	test_typing_answer();
+char	test_typing_mix();
 char	charTranslateW( const char symb );
 char	charTranslateL( const char symb );
 char*	lowerCase( const char *str );
@@ -58,7 +58,7 @@ int main( int argc, char **argv ) {
 	int state = ST_OPENFILE;
 	int oldState;
 	char isDone = false;
-	int (*testMas[6])( void );
+	char (*testMas[6])( void );
 
 	//=============================
 	//		Initilization
@@ -260,7 +260,7 @@ int	typeTest() {
 	return 0;
 }
 
-int test_question_answer() {
+char test_question_answer() {
 #ifdef __linux__
 	set_keypress_noecho();
 #endif
@@ -292,7 +292,7 @@ int test_question_answer() {
 	return 0;
 }
 
-int test_answer_question() {
+char test_answer_question() {
 #ifdef __linux__
 	set_keypress_noecho();
 #endif
@@ -324,7 +324,7 @@ int test_answer_question() {
 	return 0;
 }
 
-int test_mixing() {
+char test_mixing() {
 #ifdef __linux__
 	set_keypress_noecho();
 #endif
@@ -377,7 +377,7 @@ int test_mixing() {
 	return 0;
 }
 
-int	test_typing_question() {
+char test_typing_question() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
 #ifdef __linux__
@@ -428,7 +428,7 @@ int	test_typing_question() {
 	return 0;
 	}
 
-int	test_typing_answer() {
+char test_typing_answer() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
 #ifdef __linux__
@@ -479,7 +479,7 @@ int	test_typing_answer() {
 	return 0;
 	}
 
-int	test_typing_mix() {
+char test_typing_mix() {
 	bool repeat = false;
 	while ( repeat || !test.mixNewWord() ) {
 #ifdef __linux__
