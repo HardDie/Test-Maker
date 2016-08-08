@@ -39,8 +39,8 @@ char*	lowerCase( const char *str );
 uns::ucTestMaker test;
 
 enum {
-	ST_OPENFILE = -1,
-	ST_MENU = 0,
+	ST_OPENFILE = -2,
+	ST_MENU,
 	ST_QA,
 	ST_AQ,
 	ST_MIX,
@@ -83,8 +83,8 @@ int main( int argc, char **argv ) {
 			return 1;
 		}
 		state = atoi( argv[2] );
-		if ( state < 1 || state > 6 ) {
-			state = 11;	// При выборе статуса будет ошибка
+		if ( state < 0 || state > 5 ) {
+			state = ST_MENU;	// При выборе статуса будет ошибка
 		}
 		test.readFile();
 	}
