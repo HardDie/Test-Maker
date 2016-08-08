@@ -58,6 +58,7 @@ int main( int argc, char **argv ) {
 	int state = ST_OPENFILE;
 	int oldState;
 	char isDone = false;
+	int (*testMas[6])( void );
 
 	//=============================
 	//		Initilization
@@ -67,6 +68,12 @@ int main( int argc, char **argv ) {
 #elif defined( __linux__ )
 	save_keypress();
 #endif
+	testMas[0] = test_question_answer;
+	testMas[1] = test_answer_question;
+	testMas[2] = test_mixing;
+	testMas[3] = test_typing_question;
+	testMas[4] = test_typing_answer;
+	testMas[5] = test_typing_mix;
 
 	if ( argc == 2 ) {
 		if ( test.openFile( argv[1] ) ) {
@@ -124,96 +131,26 @@ int main( int argc, char **argv ) {
 			break;
 			/* Question -> Answer */
 		case ST_QA:
-			test.init();
-			switch ( test_question_answer() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
-			}
-			if ( state == ST_QA ) {
-				oldState = state;
-				state = ST_TRY;
-			}
-			break;
 			/* Answer -> Question */
 		case ST_AQ:
-			test.init();
-			switch ( test_answer_question() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
-			}
-			if ( state == ST_AQ ) {
-				oldState = state;
-				state = ST_TRY;
-			}
-			break;
 			/* Mix */
 		case ST_MIX:
-			test.init();
-			switch ( test_mixing() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
-			}
-			if ( state == ST_MIX ) {
-				oldState = state;
-				state = ST_TRY;
-			}
-			break;
 			/* Typing question */
 		case ST_TYPEQUESTION:
-			test.init();
-			switch ( test_typing_question() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
-			}
-			if ( state == ST_TYPEQUESTION ) {
-				oldState = state;
-				state = ST_TRY;
-			}
-			break;
 			/* Typing answer */
 		case ST_TYPEANSWER:
-			test.init();
-			switch ( test_typing_answer() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
-			}
-			if ( state == ST_TYPEANSWER ) {
-				oldState = state;
-				state = ST_TRY;
-			}
-			break;
 			/* Typing mix */
 		case ST_TYPEMIX:
 			test.init();
-			switch ( test_typing_mix() ) {
-			case 'q':
-				state = ST_END;
-				break;
-			case 'm':
-				state = ST_MENU;
-				break;
+			switch ( testMas[state]() ) {	// В зависимости от state запускаются разные функции теста
+				case 'q':
+					state = ST_END;
+					break;
+				case 'm':
+					state = ST_MENU;
+					break;
 			}
-			if ( state == ST_TYPEMIX ) {
+			if ( state != ST_END && state != ST_MENU ) {
 				oldState = state;
 				state = ST_TRY;
 			}
