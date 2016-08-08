@@ -124,9 +124,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Question -> Answer */
 		case ST_QA:
-#ifdef __linux__
-			set_keypress_noecho();
-#endif
 			test.init();
 			switch ( test_question_answer() ) {
 			case 'q':
@@ -143,9 +140,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Answer -> Question */
 		case ST_AQ:
-#ifdef __linux__
-			set_keypress_noecho();
-#endif
 			test.init();
 			switch ( test_answer_question() ) {
 			case 'q':
@@ -162,9 +156,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Mix */
 		case ST_MIX:
-#ifdef __linux__
-			set_keypress_noecho();
-#endif
 			test.init();
 			switch ( test_mixing() ) {
 			case 'q':
@@ -333,6 +324,9 @@ int	typeTest() {
 }
 
 int test_question_answer() {
+#ifdef __linux__
+	set_keypress_noecho();
+#endif
 	while ( !test.newWord() ) {
 		clearScreen();
 		cout << test.getCounter() << "/" << test.getLength() << endl;
@@ -362,6 +356,9 @@ int test_question_answer() {
 }
 
 int test_answer_question() {
+#ifdef __linux__
+	set_keypress_noecho();
+#endif
 	while ( !test.newWord() ) {
 		clearScreen();
 		cout << test.getCounter() << "/" << test.getLength() << endl;
@@ -391,6 +388,9 @@ int test_answer_question() {
 }
 
 int test_mixing() {
+#ifdef __linux__
+	set_keypress_noecho();
+#endif
 	while ( !test.mixNewWord() ) {
 		clearScreen();
 		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
