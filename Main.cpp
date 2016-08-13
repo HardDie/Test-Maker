@@ -7,6 +7,7 @@
 using namespace std;
 
 int		typeTest();
+int 	OpenFile();
 
 enum {
 	ST_OPENFILE = -2,
@@ -74,23 +75,7 @@ int main( int argc, char **argv ) {
 		switch ( state ) {
 			/* Open new file */
 		case ST_OPENFILE:
-#ifdef __linux__
-			load_keypress();
-#endif
-			clearScreen();
-			cout << "Enter file name: ";
-			char filename[100];
-			cin >> filename;
-			cin.clear();
-			while ( cin.get() != '\n' );
-			if ( test.openFile( filename ) ) {
-				cout << "Incorrect file name or the file is not available!\n";
-				waitPressKey();
-				break;
-			}
-			test.clearTest();
-			test.readFile();
-			state = ST_MENU;
+			state = OpenFile();
 			break;
 			/* Main menu */
 		case ST_MENU:
@@ -219,4 +204,31 @@ int	typeTest() {
 		}
 	}
 	return 0;
+}
+
+/*
+====================
+OpenFile
+
+	Функция открытия файла, результатом своей работы возвращает состояние ST_END в случае ошибки и ST_MENU в случае верного файла
+====================
+*/
+int OpenFile() {
+#ifdef __linux__
+	load_keypress();
+#endif
+	clearScreen();
+	cout << "Enter file name: ";
+	char filename[100];
+	cin >> filename;
+	cin.clear();
+	while ( cin.get() != '\n' );
+	if ( test.openFile( filename ) ) {
+		cout << "Incorrect file name or the file is not available!\n";
+		waitPressKey();
+		return ST_END;
+	}
+	test.clearTest();
+	test.readFile();
+	return ST_MENU;
 }
