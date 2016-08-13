@@ -121,7 +121,7 @@ int main( int argc, char **argv ) {
 			case ' ':
 			case 'y':
 			case 'Y':
-			case 13:	// Enter
+			case '\n':
 				state = oldState;
 				break;
 			case 'q':
