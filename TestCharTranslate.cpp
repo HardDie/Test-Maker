@@ -128,7 +128,7 @@ char* ToLowerL( const char* str ) {
 			if ( endChar != NULL ) {
 				res[i] = endChar[0];
 				res[i + 1] = endChar[1];
-				free( endChar );
+				delete endChar;
 			} else {
 				res[i] = str[i];
 				res[i + 1] = str[i + 1];
@@ -181,17 +181,17 @@ char* CharTranslateL_Ru( const char *symb ) {
 
 	// Перевод символа, верхнего регистра в нижний
 	if ( symb[0] == -48 && symb[1] >= -112 && symb[1] <= -97 ) {	// А-Е Ж-П
-		char *retSymb = ( char* )malloc( 2 );
+		char *retSymb = new char[2];
 		retSymb[0] = -48;
 		retSymb[1] = symb[1] + 32;
 		return retSymb;
 	} else if ( symb[0] == -48 && symb[1] == -127 ) {	//Ё
-		char *retSymb = ( char* )malloc( 2 );
+		char *retSymb = new char[2];
 		retSymb[0] = -47;
 		retSymb[1] = -111;
 		return retSymb;
 	} else if ( symb[0] == -48 && symb[1] >= -96 && symb[1] <= -81 ) {	//Р-Я
-		char *retSymb = ( char* )malloc( 2 );
+		char *retSymb = new char[2];
 		retSymb[0] = -47;
 		retSymb[1] = symb[1] - 32;
 		return retSymb;
