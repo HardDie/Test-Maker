@@ -11,13 +11,13 @@
 #define ToLowerFile ToLowerL
 #endif
 
-char*	ToLowerConsoleW( const char* str );
-char*	ToLowerFileW( const char* str );
-char	CharTranslateW_Console( const char symb );
-char	CharTranslateW_File( const char symb );
+char	*	ToLowerConsoleW( const char* str );
+char	*	ToLowerFileW( const char* str );
+char		CharTranslateW_Console( const char symb );
+char		CharTranslateW_File( const char symb );
 
-char*	ToLowerL( const char* str );
-char	CharTranslateL_En( const char symb );
-char*	CharTranslateL_Ru( const char *symb );
+char	*	ToLowerL( const char* str );
+char		CharTranslateL_En( const char symb );
+char	*	CharTranslateL_Ru( const char *symb );
 
 #endif
