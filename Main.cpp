@@ -17,24 +17,23 @@ static struct termios stored_settings;
 #include <conio.h>
 #endif
 
-#ifdef __linux__
-#define charTranslate charTranslateL
-#elif defined( _WIN32 )
-#define charTranslate charTranslateW
-#endif
-
 int		waitPressKey();
 void	clearScreen();
 int		typeTest();
+
 char	test_question_answer();
 char	test_answer_question();
 char	test_mixing();
 char	test_typing_question();
 char	test_typing_answer();
 char	test_typing_mix();
-char	charTranslateW( const char symb );
-char	charTranslateL( const char symb );
-char*	lowerCase( const char *str );
+
+char*	ToLowerConsole( const char* str );
+char*	ToLowerFile( const char* str );
+char	CharTranslateW_Console( const char symb );
+char	CharTranslateW_File( const char symb );
+char	CharTranslateL_Console( const char symb );
+char	CharTranslateL_File( const char symb );
 
 uns::ucTestMaker test;
 
@@ -58,7 +57,7 @@ int main( int argc, char **argv ) {
 	int state = ST_OPENFILE;
 	int oldState;
 	char isDone = false;
-	char (*testMas[6])( void );
+	char( *testMas[6] )( void );
 
 	//=============================
 	//		Initilization
@@ -143,12 +142,12 @@ int main( int argc, char **argv ) {
 		case ST_TYPEMIX:
 			test.init();
 			switch ( testMas[state]() ) {	// В зависимости от state запускаются разные функции теста
-				case 'q':
-					state = ST_END;
-					break;
-				case 'm':
-					state = ST_MENU;
-					break;
+			case 'q':
+				state = ST_END;
+				break;
+			case 'm':
+				state = ST_MENU;
+				break;
 			}
 			if ( state != ST_END && state != ST_MENU ) {
 				oldState = state;
@@ -390,18 +389,7 @@ char test_typing_question() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef _WIN32
-		for ( int i = 0; i < SIZE; i++ ) {
-			if ( answer[i] == 0 ) {
-				break;
-			}
-			answer[i] = charTranslate( answer[i] );
-		}
-
-		if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
-#elif defined ( __linux__ )
-		if ( strcmp( answer, test.getQuestion() ) == 0 ) {
-#endif
+		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getQuestion() ) ) == 0 ) {
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
@@ -424,9 +412,9 @@ char test_typing_question() {
 		case 'M':
 			return 'm';
 		}
-		}
-	return 0;
 	}
+	return 0;
+}
 
 char test_typing_answer() {
 	bool repeat = false;
@@ -441,18 +429,7 @@ char test_typing_answer() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef _WIN32
-		for ( int i = 0; i < SIZE; i++ ) {
-			if ( answer[i] == 0 ) {
-				break;
-			}
-			answer[i] = charTranslate( answer[i] );
-		}
-
-		if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
-#elif defined ( __linux__ )
-		if ( strcmp( answer, test.getAnswer() ) == 0 ) {
-#endif
+		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getAnswer() ) ) == 0 ) {
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
@@ -475,9 +452,9 @@ char test_typing_answer() {
 		case 'M':
 			return 'm';
 		}
-		}
-	return 0;
 	}
+	return 0;
+}
 
 char test_typing_mix() {
 	bool repeat = false;
@@ -503,23 +480,10 @@ char test_typing_mix() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-#ifdef _WIN32
-		for ( int i = 0; i < SIZE; i++ ) {
-			if ( answer[i] == 0 ) {
-				break;
-			}
-			answer[i] = charTranslate( answer[i] );
-		}
-#endif
-
 		switch ( test.getFlag() ) {
 		case 1:
 		case 4:
-#ifdef _WIN32
-			if ( strcmp( answer, lowerCase( test.getQuestion() ) ) == 0 ) {
-#elif defined ( __linux__ )
-			if ( strcmp( answer, test.getQuestion() ) == 0 ) {
-#endif
+			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getQuestion() ) ) == 0 ) {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
@@ -533,11 +497,7 @@ char test_typing_mix() {
 			break;
 		case 2:
 		case 3:
-#ifdef _WIN32
-			if ( strcmp( answer, lowerCase( test.getAnswer() ) ) == 0 ) {
-#elif defined ( __linux__ )
-			if ( strcmp( answer, test.getAnswer() ) == 0 ) {
-#endif
+			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getAnswer() ) ) == 0 ) {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
@@ -549,7 +509,7 @@ char test_typing_mix() {
 				repeat = true;
 			}
 			break;
-			}
+		}
 
 #ifdef __linux__
 		set_keypress_noecho();
@@ -563,9 +523,41 @@ char test_typing_mix() {
 		case 'M':
 			return 'm';
 		}
-			}
+	}
 	return 0;
+}
+
+char* ToLowerConsole( const char* str ) {
+	static char res[SIZE];
+	for ( int i = 0; i < SIZE; i++ ) {
+		if ( str[i] == 0 ) {
+			res[i] = 0;
+			break;
 		}
+#ifdef _WIN32
+		res[i] = CharTranslateW_Console( str[i] );
+#elif defined( __linux__ )
+		res[i] = CharTranslateL_Console( str[i] );
+#endif
+	}
+	return res;
+}
+
+char* ToLowerFile( const char* str ) {
+	static char res[SIZE];
+	for ( int i = 0; i < SIZE; i++ ) {
+		if ( str[i] == 0 ) {
+			res[i] = 0;
+			break;
+		}
+#ifdef _WIN32
+		res[i] = CharTranslateW_File( str[i] );
+#elif defined( __linux__ )
+		res[i] = CharTranslateL_File( str[i] );
+#endif
+	}
+	return res;
+}
 
 char CharTranslateW_Console( const char symb ) {
 	// Если на вход поступила английская буква нижнего региста, то просто возвращаем ее
@@ -624,20 +616,12 @@ char CharTranslateW_File( const char symb ) {
 	return symb;
 }
 
-char charTranslateL( const char symb ) {
+char CharTranslateL_Console( const char symb ) {
 	return symb;
 }
 
-char* lowerCase( const char *str ) {
-	static char res[SIZE];
-	for ( int i = 0; i < SIZE; i++ ) {
-		if ( str[i] == 0 ) {
-			res[i] = 0;
-			break;
-		}
-		res[i] = tolower( str[i] );
-	}
-	return res;
+char CharTranslateL_File( const char symb ) {
+	return symb;
 }
 
 #ifdef __linux__
