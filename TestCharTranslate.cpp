@@ -2,46 +2,38 @@
 
 /*
 ====================
-ToLowerConsole
+ToLowerConsoleW
 
 	Принимает строку полученую из консоли от пользователя, посимвольно переводит ее в нижний регистр, возвращает результирующую строку
 ====================
 */
-char* ToLowerConsole( const char* str ) {
+char* ToLowerConsoleW( const char* str ) {
 	static char res[SIZE];
 	for ( int i = 0; i < SIZE; i++ ) {
 		if ( str[i] == 0 ) {
 			res[i] = 0;
 			break;
 		}
-#ifdef _WIN32
 		res[i] = CharTranslateW_Console( str[i] );
-#elif defined( __linux__ )
-		res[i] = CharTranslateL_Console( str[i] );
-#endif
 	}
 	return res;
 }
 
 /*
 ====================
-ToLowerFile
+ToLowerFileW
 
 	Принимает строку считаную из файла теста, посимвольно переводит ее в нижний регистр, возвращает результирующую строку
 ====================
 */
-char* ToLowerFile( const char* str ) {
+char* ToLowerFileW( const char* str ) {
 	static char res[SIZE];
 	for ( int i = 0; i < SIZE; i++ ) {
 		if ( str[i] == 0 ) {
 			res[i] = 0;
 			break;
 		}
-#ifdef _WIN32
 		res[i] = CharTranslateW_File( str[i] );
-#elif defined( __linux__ )
-		res[i] = CharTranslateL_File( str[i] );
-#endif
 	}
 	return res;
 }
@@ -119,22 +111,91 @@ char CharTranslateW_File( const char symb ) {
 
 /*
 ====================
-CharTranslateL_Console
+ToLowerL
 
-	Переводит символ, считаный из консоли пользователя, в нижний регистр
+	Принимает строку, посимвольно переводит ее в нижний регистр, возвращает результирующую строку
 ====================
 */
-char CharTranslateL_Console( const char symb ) {
+char* ToLowerL( const char* str ) {
+	static char res[SIZE];
+	for ( int i = 0; i < SIZE; i++ ) {
+		if ( str[i] == 0 ) {
+			res[i] = 0;
+			break;
+		}
+		if ( str[i] == -47 || str[i] == -48 ) {
+			char* endChar = CharTranslateL_Ru( &str[i] );
+			if ( endChar != NULL ) {
+				res[i] = endChar[0];
+				res[i + 1] = endChar[1];
+				free( endChar );
+			} else {
+				res[i] = str[i];
+				res[i + 1] = str[i + 1];
+			}
+			i++;
+		} else {
+			res[i] = CharTranslateL_En( str[i] );
+		}
+	}
+	return res;
+}
+
+/*
+====================
+CharTranslateL_En
+
+	Переводит английский символ в нижний регистр
+====================
+*/
+char CharTranslateL_En( const char symb ) {
+	// Если на вход поступила буква нижнего региста, то просто возвращаем ее
+	if ( symb >= 97 && symb <= 122 ) {
+		return symb;
+	}
+
+	// Перевод символа, верхнего регистра в нижний
+	if ( symb >= 65 && symb <= 90 ) {
+		return symb + 32;
+	}
+
 	return symb;
 }
 
 /*
 ====================
-CharTranslateL_File
+CharTranslateL_Ru
 
-	Переводит символ, считаный из файла теста, в нижний регистр
+	Переводит русский символ в нижний регистр
 ====================
 */
-char CharTranslateL_File( const char symb ) {
-	return symb;
+char* CharTranslateL_Ru( const char *symb ) {
+	// Если на вход поступила буква нижнего региста, то возвращаем NULL
+	if ( symb[0] == -48 && symb[1] >= -80 && symb[1] <= -65 ) {	// а-е ж-п
+		return NULL;
+	} else if ( symb[0] == -47 && symb[1] == -111 ) {	//ё
+		return NULL;
+	} else if ( symb[0] == -47 && symb[1] >= -128 && symb[1] <= -113 ) {	//р-я
+		return NULL;
+	}
+
+	// Перевод символа, верхнего регистра в нижний
+	if ( symb[0] == -48 && symb[1] >= -112 && symb[1] <= -97 ) {	// А-Е Ж-П
+		char *retSymb = ( char* )malloc( 2 );
+		retSymb[0] = -48;
+		retSymb[1] = symb[1] + 32;
+		return retSymb;
+	} else if ( symb[0] == -48 && symb[1] == -127 ) {	//Ё
+		char *retSymb = ( char* )malloc( 2 );
+		retSymb[0] = -47;
+		retSymb[1] = -111;
+		return retSymb;
+	} else if ( symb[0] == -48 && symb[1] >= -96 && symb[1] <= -81 ) {	//Р-Я
+		char *retSymb = ( char* )malloc( 2 );
+		retSymb[0] = -47;
+		retSymb[1] = symb[1] - 32;
+		return retSymb;
+	}
+
+	return NULL;
 }
