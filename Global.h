@@ -12,13 +12,13 @@ void	SaveKeypress();
 void	SetNoCanonicalMode();
 void	LoadKeypress();
 
-int		WaitPressKey();
-void	ClearScreen();
-
 static struct termios stored_settings;
 #elif defined( _WIN32 )
 #include <conio.h>
 #endif
+
+int		WaitPressKey();
+void	ClearScreen();
 
 extern uns::ucTestMaker test;
 
