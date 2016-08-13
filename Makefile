@@ -1,7 +1,10 @@
 comp=g++ -std=c++11
 dir=bin
 obj=	$(dir)/Main.o \
-		$(dir)/TestMaker.o
+		$(dir)/TestMaker.o	\
+		$(dir)/TestFunctions.o \
+		$(dir)/TestCharTranslate.o \
+		$(dir)/Global.o
 
 default : checkBin $(dir)/TestMaker
 
