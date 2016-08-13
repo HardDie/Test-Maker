@@ -23,20 +23,20 @@ namespace uns {
 		int					index = -1;	// Номер текущей строки
 		char				str[SIZE];	// Возвращаемая строка
 		std::ifstream 		file;	// Подключаемый файл
-		
+
 	public:
-		void				clearTest();
-		int					openFile( const char filename[] );
-		void				readFile();
-		void				addQuestion();
-		void				init();
-		int					newWord();
-		int					mixNewWord();
-		const	char*		getQuestion();
-		const	char*		getAnswer();
-		int					getCounter() { return counter; }
-		int					getLength() { return data.size(); }
-		char				getFlag() { return data[index].flag; }
+		void				ClearTest();
+		int					OpenFile( const char filename[] );
+		void				ReadFile();
+		void				AddQuestion();
+		void				Init();
+		int					NewWord();
+		int					MixNewWord();
+		const	char*		GetQuestion();
+		const	char*		GetAnswer();
+		int					GetCounter() { return counter; }
+		int					GetLength() { return data.size(); }
+		char				GetFlag() { return data[index].flag; }
 							~ucTestMaker();
 	};
 

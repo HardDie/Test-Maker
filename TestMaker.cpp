@@ -2,10 +2,10 @@
 
 namespace uns {
 	/*
-	* Name: clearTest
+	* Name: ClearTest
 	* Description: Очищает тест
 	*/
-	void ucTestMaker::clearTest() {
+	void ucTestMaker::ClearTest() {
 		for ( int i = 0; i < data.size(); i++ ) {
 			delete[] data[i].string;
 		}
@@ -15,10 +15,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: openFile
+	* Name: OpenFile
 	* Description: Открывает файл
 	*/
-	int ucTestMaker::openFile( const char filename[] ) {
+	int ucTestMaker::OpenFile( const char filename[] ) {
 		file.open( filename );
 		if ( !file.is_open() ) {
 			return -1;
@@ -27,21 +27,21 @@ namespace uns {
 	}
 
 	/*
-	* Name: readFile
+	* Name: ReadFile
 	* Description: Считывает все строки из файла
 	*/
-	void ucTestMaker::readFile() {
+	void ucTestMaker::ReadFile() {
 		while ( !file.eof() ) {
-			addQuestion();
+			AddQuestion();
 		}
 		file.close();
 	}
 
 	/*
-	* Name: addQuestion
+	* Name: AddQuestion
 	* Description: Считывает новую строку в конец массива
 	*/
-	void ucTestMaker::addQuestion() {
+	void ucTestMaker::AddQuestion() {
 		usData_t tmpData;
 		tmpData.string = new char[SIZE];
 		char *comentPointer = NULL;
@@ -61,10 +61,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: init
+	* Name: Init
 	* Description: Сбрасывает все флаги слов
 	*/
-	void ucTestMaker::init() {
+	void ucTestMaker::Init() {
 		srand( ( unsigned int ) time( NULL ) );
 		for ( int i = 0; i < data.size(); i++ ) {
 			data[i].flag = 0;
@@ -73,10 +73,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: newWord
+	* Name: NewWord
 	* Description: Выбирает новое слово для вопроса
 	*/
-	int ucTestMaker::newWord() {
+	int ucTestMaker::NewWord() {
 		if ( counter == data.size() ) {
 			return 1;
 		}
@@ -87,10 +87,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: mixNewWord
+	* Name: MixNewWord
 	* Description: Выбирает новое слово для вопроса с учетом двух вопросов
 	*/
-	int ucTestMaker::mixNewWord() {
+	int ucTestMaker::MixNewWord() {
 		if ( counter == ( 2 * data.size() ) ) {
 			return 1;
 		}
@@ -107,10 +107,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: getQuestion
+	* Name: GetQuestion
 	* Description: Возвращает вопрос
 	*/
-	const char*	ucTestMaker::getQuestion() {
+	const char*	ucTestMaker::GetQuestion() {
 		for ( int i = 0; i < SIZE; i++ ) {
 			if ( data[index].string[i] == '-' && data[index].string[i - 1] == ' ' && data[index].string[i + 1] == ' ' ) {
 				str[i - 1] = '\0';
@@ -122,10 +122,10 @@ namespace uns {
 	}
 
 	/*
-	* Name: getQuestion
+	* Name: GetAnswer
 	* Description: Возвращает ответ
 	*/
-	const char*	ucTestMaker::getAnswer() {
+	const char*	ucTestMaker::GetAnswer() {
 		int i = 0;
 		while ( !( data[index].string[i] == '-' && data[index].string[i - 1] == ' ' && data[index].string[i + 1] == ' ' ) ) {
 			i++;

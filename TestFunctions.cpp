@@ -2,21 +2,21 @@
 
 /*
 ====================
-test_question_answer
+TestQuestionAnswer
 
 	Проводится по типу отображения, сначала отображается вопрос, а по нажатию клавиши ответ
 ====================
 */
-char test_question_answer() {
+char TestQuestionAnswer() {
 #ifdef __linux__
-	set_keypress_noecho();
+	SetNoCanonicalMode();
 #endif
-	while ( !test.newWord() ) {
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+	while ( !test.NewWord() ) {
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() << endl;
 
-		cout << test.getQuestion();
-		switch ( waitPressKey() ) {
+		cout << test.GetQuestion();
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -25,9 +25,9 @@ char test_question_answer() {
 			return 'm';
 		}
 
-		cout << " - " << test.getAnswer() << endl;
+		cout << " - " << test.GetAnswer() << endl;
 		cout << "Press any key...";
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -41,21 +41,21 @@ char test_question_answer() {
 
 /*
 ====================
-test_answer_question
+TestAnswerQuestion
 
 	Проводится по типу отображения, сначала отображается ответ, а по нажатию клавиши вопрос
 ====================
 */
-char test_answer_question() {
+char TestAnswerQuestion() {
 #ifdef __linux__
-	set_keypress_noecho();
+	SetNoCanonicalMode();
 #endif
-	while ( !test.newWord() ) {
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+	while ( !test.NewWord() ) {
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() << endl;
 
-		cout << test.getAnswer();
-		switch ( waitPressKey() ) {
+		cout << test.GetAnswer();
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -64,9 +64,9 @@ char test_answer_question() {
 			return 'm';
 		}
 
-		cout << " - " << test.getQuestion() << endl;
+		cout << " - " << test.GetQuestion() << endl;
 		cout << "Press any key...";
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -80,31 +80,31 @@ char test_answer_question() {
 
 /*
 ====================
-test_mixing
+TestMixing
 
 	Проводится по типу отображения, в случайном порядке определяет вывод вопроса - ответа, или ответа - вопроса
 ====================
 */
-char test_mixing() {
+char TestMixing() {
 #ifdef __linux__
-	set_keypress_noecho();
+	SetNoCanonicalMode();
 #endif
-	while ( !test.mixNewWord() ) {
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
+	while ( !test.MixNewWord() ) {
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() * 2 << endl;
 
-		switch ( test.getFlag() ) {
+		switch ( test.GetFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getAnswer();
+			cout << test.GetAnswer();
 			break;
 		case 2:
 		case 3:
-			cout << test.getQuestion();
+			cout << test.GetQuestion();
 			break;
 		}
 
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -114,19 +114,19 @@ char test_mixing() {
 		}
 
 		cout << " - ";
-		switch ( test.getFlag() ) {
+		switch ( test.GetFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getQuestion();
+			cout << test.GetQuestion();
 			break;
 		case 2:
 		case 3:
-			cout << test.getAnswer();
+			cout << test.GetAnswer();
 			break;
 		}
 		cout << endl << "Press any key...";
 
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -140,40 +140,40 @@ char test_mixing() {
 
 /*
 ====================
-test_typing_question
+TestTypingQuestion
 
 	Проводится по типу набора вопроса при выведеном ответе
 ====================
 */
-char test_typing_question() {
+char TestTypingQuestion() {
 	bool repeat = false;
-	while ( repeat || !test.newWord() ) {
+	while ( repeat || !test.NewWord() ) {
 #ifdef __linux__
-		load_keypress();
+		LoadKeypress();
 #endif
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() << endl;
 
-		cout << test.getAnswer() << "\nEnter: ";
+		cout << test.GetAnswer() << "\nEnter: ";
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getQuestion() ) ) == 0 ) {
+		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.GetQuestion() ) ) == 0 ) {
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
-			cout << test.getQuestion() << endl;
+			cout << test.GetQuestion() << endl;
 			cout << "Next\n";
 			repeat = false;
 		} else {
-			cout << "Wrong: " << test.getQuestion() << endl;
+			cout << "Wrong: " << test.GetQuestion() << endl;
 			repeat = true;
 		}
 #ifdef __linux__
-		set_keypress_noecho();
+		SetNoCanonicalMode();
 #endif
 		cout << "Press any key...";
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -187,40 +187,40 @@ char test_typing_question() {
 
 /*
 ====================
-test_typing_answer
+TestTypingAnswer
 
 	Проводится по типу набора ответа при выведеном вопросе
 ====================
 */
-char test_typing_answer() {
+char TestTypingAnswer() {
 	bool repeat = false;
-	while ( repeat || !test.newWord() ) {
+	while ( repeat || !test.NewWord() ) {
 #ifdef __linux__
-		load_keypress();
+		LoadKeypress();
 #endif
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() << endl;
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() << endl;
 
-		cout << test.getQuestion() << "\nEnter: ";
+		cout << test.GetQuestion() << "\nEnter: ";
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getAnswer() ) ) == 0 ) {
+		if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.GetAnswer() ) ) == 0 ) {
 			cout << "Right!\n";
 			repeat = false;
 		} else if ( strcmp( answer, " " ) == 0 ) {
-			cout << test.getAnswer() << endl;
+			cout << test.GetAnswer() << endl;
 			cout << "Next\n";
 			repeat = false;
 		} else {
-			cout << "Wrong: " << test.getAnswer() << endl;
+			cout << "Wrong: " << test.GetAnswer() << endl;
 			repeat = true;
 		}
 #ifdef __linux__
-		set_keypress_noecho();
+		SetNoCanonicalMode();
 #endif
 		cout << "Press any key...";
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';
@@ -234,28 +234,28 @@ char test_typing_answer() {
 
 /*
 ====================
-test_typing_mix
+TestTypingMix
 
 	Проводится по типу набора, в случайном порядке определяет что вводить вопрос или ответ
 ====================
 */
-char test_typing_mix() {
+char TestTypingMix() {
 	bool repeat = false;
-	while ( repeat || !test.mixNewWord() ) {
+	while ( repeat || !test.MixNewWord() ) {
 #ifdef __linux__
-		load_keypress();
+		LoadKeypress();
 #endif
-		clearScreen();
-		cout << test.getCounter() << "/" << test.getLength() * 2 << endl;
+		ClearScreen();
+		cout << test.GetCounter() << "/" << test.GetLength() * 2 << endl;
 
-		switch ( test.getFlag() ) {
+		switch ( test.GetFlag() ) {
 		case 1:
 		case 4:
-			cout << test.getAnswer();
+			cout << test.GetAnswer();
 			break;
 		case 2:
 		case 3:
-			cout << test.getQuestion();
+			cout << test.GetQuestion();
 			break;
 		}
 
@@ -263,42 +263,42 @@ char test_typing_mix() {
 		static char answer[SIZE];
 		cin.getline( answer, SIZE );
 
-		switch ( test.getFlag() ) {
+		switch ( test.GetFlag() ) {
 		case 1:
 		case 4:
-			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getQuestion() ) ) == 0 ) {
+			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.GetQuestion() ) ) == 0 ) {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
-				cout << test.getQuestion() << endl;
+				cout << test.GetQuestion() << endl;
 				cout << "Next\n";
 				repeat = false;
 			} else {
-				cout << "Wrong: " << test.getQuestion() << endl;
+				cout << "Wrong: " << test.GetQuestion() << endl;
 				repeat = true;
 			}
 			break;
 		case 2:
 		case 3:
-			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.getAnswer() ) ) == 0 ) {
+			if ( strcmp( ToLowerConsole( answer ), ToLowerFile( test.GetAnswer() ) ) == 0 ) {
 				cout << "Right!\n";
 				repeat = false;
 			} else if ( strcmp( answer, " " ) == 0 ) {
-				cout << test.getAnswer() << endl;
+				cout << test.GetAnswer() << endl;
 				cout << "Next\n";
 				repeat = false;
 			} else {
-				cout << "Wrong: " << test.getAnswer() << endl;
+				cout << "Wrong: " << test.GetAnswer() << endl;
 				repeat = true;
 			}
 			break;
 		}
 
 #ifdef __linux__
-		set_keypress_noecho();
+		SetNoCanonicalMode();
 #endif
 		cout << "Press any key...";
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case 'q':
 		case 'Q':
 			return 'q';

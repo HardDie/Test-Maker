@@ -5,12 +5,12 @@ uns::ucTestMaker test;
 
 /*
 ====================
-waitPressKey
+WaitPressKey
 
 	Позволяет остановить консоль и ожидать нажатия клавиши или получить код нажатой клавиши
 ====================
  */
-int waitPressKey() {
+int WaitPressKey() {
 #ifdef __linux__
 	return getc( stdin );
 #elif defined( _WIN32 )
@@ -21,12 +21,12 @@ int waitPressKey() {
 
 /*
 ====================
-clearScreen
+ClearScreen
 
 	Очищает экран
 ====================
 */
-void clearScreen() {
+void ClearScreen() {
 #ifdef __linux__
 	system( "clear" );
 #elif defined( _WIN32 )
@@ -37,23 +37,23 @@ void clearScreen() {
 #ifdef __linux__
 /*
 ====================
-save_keypress
+SaveKeypress
 
 	Сохраняет стандартные настройки терминала
 ====================
 */
-void save_keypress() {
+void SaveKeypress() {
 	tcgetattr( 0, &stored_settings );
 }
 
 /*
 ====================
-set_keypress_noecho
+SetNoCanonicalMode
 
 	Переводит терминал в не канонический режим и отключает оторажение на экране нажатых клавиш
 ====================
 */
-void set_keypress_noecho() {
+void SetNoCanonicalMode() {
 	struct termios new_settings;
 	new_settings = stored_settings;
 
@@ -66,12 +66,12 @@ void set_keypress_noecho() {
 
 /*
 ====================
-load_keypress
+LoadKeypress
 
 	Возвращает стандартные настройки терминала
 ====================
 */
-void load_keypress() {
+void LoadKeypress() {
 	tcsetattr( 0, TCSANOW, &stored_settings );
 }
 #endif

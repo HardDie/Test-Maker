@@ -9,11 +9,11 @@
 
 using namespace std;
 
-char	test_question_answer();
-char	test_answer_question();
-char	test_mixing();
-char	test_typing_question();
-char	test_typing_answer();
-char	test_typing_mix();
+char	TestQuestionAnswer();
+char	TestAnswerQuestion();
+char	TestMixing();
+char	TestTypingQuestion();
+char	TestTypingAnswer();
+char	TestTypingMix();
 
 #endif

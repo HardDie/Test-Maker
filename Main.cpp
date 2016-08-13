@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int		typeTest();
+int		TypeTest();
 int 	OpenFile();
 
 enum {
@@ -37,34 +37,34 @@ int main( int argc, char **argv ) {
 #ifdef _WIN32
 	setlocale( LC_ALL, "Russian" );
 #elif defined( __linux__ )
-	save_keypress();
+	SaveKeypress();
 #endif
-	testMas[0] = test_question_answer;
-	testMas[1] = test_answer_question;
-	testMas[2] = test_mixing;
-	testMas[3] = test_typing_question;
-	testMas[4] = test_typing_answer;
-	testMas[5] = test_typing_mix;
+	testMas[0] = TestQuestionAnswer;
+	testMas[1] = TestAnswerQuestion;
+	testMas[2] = TestMixing;
+	testMas[3] = TestTypingQuestion;
+	testMas[4] = TestTypingAnswer;
+	testMas[5] = TestTypingMix;
 
 	if ( argc == 2 ) {
-		if ( test.openFile( argv[1] ) ) {
+		if ( test.OpenFile( argv[1] ) ) {
 			cout << "Incorrect file name or the file is not available!\n";
-			waitPressKey();
+			WaitPressKey();
 			return 1;
 		}
-		test.readFile();
+		test.ReadFile();
 		state = ST_MENU;
 	} else if ( argc == 3 ) {
-		if ( test.openFile( argv[1] ) ) {
+		if ( test.OpenFile( argv[1] ) ) {
 			cout << "Incorrect file name or the file is not available!\n";
-			waitPressKey();
+			WaitPressKey();
 			return 1;
 		}
 		state = atoi( argv[2] );
 		if ( state < 0 || state > 5 ) {
 			state = ST_MENU;	// При выборе статуса будет ошибка
 		}
-		test.readFile();
+		test.ReadFile();
 	}
 
 	//=============================
@@ -79,7 +79,7 @@ int main( int argc, char **argv ) {
 			break;
 			/* Main menu */
 		case ST_MENU:
-			state = typeTest();
+			state = TypeTest();
 			break;
 			/* Question -> Answer */
 		case ST_QA:
@@ -93,7 +93,7 @@ int main( int argc, char **argv ) {
 		case ST_TYPEANSWER:
 			/* Typing mix */
 		case ST_TYPEMIX:
-			test.init();
+			test.Init();
 			switch ( testMas[state]() ) {	// В зависимости от state запускаются разные функции теста
 			case 'q':
 				state = ST_END;
@@ -109,9 +109,9 @@ int main( int argc, char **argv ) {
 			break;
 			/* Try again? */
 		case ST_TRY:
-			clearScreen();
+			ClearScreen();
 			cout << "Want try again?";
-			switch ( waitPressKey() ) {
+			switch ( WaitPressKey() ) {
 			case 'n':
 			case 'N':
 			case 'm':
@@ -133,7 +133,7 @@ int main( int argc, char **argv ) {
 			/* End game */
 		case ST_END:
 			isDone = true;
-			clearScreen();
+			ClearScreen();
 			break;
 			/* Error */
 		default:
@@ -144,23 +144,23 @@ int main( int argc, char **argv ) {
 	}
 
 #ifdef __linux__
-	load_keypress();
+	LoadKeypress();
 #endif
 	return 0;
 }
 
 /*
 ====================
-typeTest
+TypeTest
 
 	Выводит на экран главное меню с выбором типа теста и возвращает результат выбраный пользователем
 ====================
 */
-int	typeTest() {
+int	TypeTest() {
 #ifdef __linux__
-	set_keypress_noecho();
+	SetNoCanonicalMode();
 #endif
-	clearScreen();
+	ClearScreen();
 	cout << "Choose test type:\n";
 	cout << "1. Question -> Answer\n";
 	cout << "2. Answer -> Question\n";
@@ -171,7 +171,7 @@ int	typeTest() {
 	cout << "n. New file\n";
 	cout << "Enter: ";
 	while ( 1 ) {
-		switch ( waitPressKey() ) {
+		switch ( WaitPressKey() ) {
 		case '1':
 			return ST_QA;
 			break;
@@ -215,20 +215,20 @@ OpenFile
 */
 int OpenFile() {
 #ifdef __linux__
-	load_keypress();
+	LoadKeypress();
 #endif
-	clearScreen();
+	ClearScreen();
 	cout << "Enter file name: ";
 	char filename[100];
 	cin >> filename;
 	cin.clear();
 	while ( cin.get() != '\n' );
-	if ( test.openFile( filename ) ) {
+	if ( test.OpenFile( filename ) ) {
 		cout << "Incorrect file name or the file is not available!\n";
-		waitPressKey();
+		WaitPressKey();
 		return ST_END;
 	}
-	test.clearTest();
-	test.readFile();
+	test.ClearTest();
+	test.ReadFile();
 	return ST_MENU;
 }

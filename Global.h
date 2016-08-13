@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <termios.h>
 
-void	save_keypress();
-void	set_keypress_noecho();
-void	load_keypress();
+void	SaveKeypress();
+void	SetNoCanonicalMode();
+void	LoadKeypress();
 
-int		waitPressKey();
-void	clearScreen();
+int		WaitPressKey();
+void	ClearScreen();
 
 static struct termios stored_settings;
 #elif defined( _WIN32 )
