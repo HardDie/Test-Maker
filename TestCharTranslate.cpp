@@ -1,5 +1,12 @@
 #include "TestCharTranslate.h"
 
+/*
+====================
+ToLowerConsole
+
+	Принимает строку полученую из консоли от пользователя, посимвольно переводит ее в нижний регистр, возвращает результирующую строку
+====================
+*/
 char* ToLowerConsole( const char* str ) {
 	static char res[SIZE];
 	for ( int i = 0; i < SIZE; i++ ) {
@@ -16,6 +23,13 @@ char* ToLowerConsole( const char* str ) {
 	return res;
 }
 
+/*
+====================
+ToLowerFile
+
+	Принимает строку считаную из файла теста, посимвольно переводит ее в нижний регистр, возвращает результирующую строку
+====================
+*/
 char* ToLowerFile( const char* str ) {
 	static char res[SIZE];
 	for ( int i = 0; i < SIZE; i++ ) {
@@ -32,6 +46,13 @@ char* ToLowerFile( const char* str ) {
 	return res;
 }
 
+/*
+====================
+CharTranslateW_Console
+
+	Переводит символ, считаный из консоли пользователя, в нижний регистр
+====================
+*/
 char CharTranslateW_Console( const char symb ) {
 	// Если на вход поступила английская буква нижнего региста, то просто возвращаем ее
 	if ( symb >= 97 && symb <= 122 ) {
@@ -62,6 +83,13 @@ char CharTranslateW_Console( const char symb ) {
 	return symb;
 }
 
+/*
+====================
+CharTranslateW_File
+
+	Переводит символ, считаный из файла теста, в нижний регистр
+====================
+*/
 char CharTranslateW_File( const char symb ) {
 
 	// Если на вход поступила русская буква нижнего регистра, то просто возвращаем ее
@@ -89,10 +117,24 @@ char CharTranslateW_File( const char symb ) {
 	return symb;
 }
 
+/*
+====================
+CharTranslateL_Console
+
+	Переводит символ, считаный из консоли пользователя, в нижний регистр
+====================
+*/
 char CharTranslateL_Console( const char symb ) {
 	return symb;
 }
 
+/*
+====================
+CharTranslateL_File
+
+	Переводит символ, считаный из файла теста, в нижний регистр
+====================
+*/
 char CharTranslateL_File( const char symb ) {
 	return symb;
 }

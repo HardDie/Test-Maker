@@ -167,8 +167,13 @@ int main( int argc, char **argv ) {
 	return 0;
 }
 
+/*
+====================
+typeTest
 
-
+	Выводит на экран главное меню с выбором типа теста и возвращает результат выбраный пользователем
+====================
+*/
 int	typeTest() {
 	clearScreen();
 	cout << "Choose test type:\n";

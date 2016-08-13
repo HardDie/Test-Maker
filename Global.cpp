@@ -1,7 +1,15 @@
 #include "Global.h"
 
+	/* Глобальный обьект класса test, от которого выполняются все команды */
 uns::ucTestMaker test;
 
+/*
+====================
+waitPressKey
+
+	Позволяет остановить консоль и ожидать нажатия клавиши или получить код нажатой клавиши
+====================
+ */
 int waitPressKey() {
 #ifdef __linux__
 	return getc( stdin );
@@ -10,6 +18,14 @@ int waitPressKey() {
 #endif
 }
 
+
+/*
+====================
+clearScreen
+
+	Очищает экран
+====================
+*/
 void clearScreen() {
 #ifdef __linux__
 	system( "clear" );
@@ -19,10 +35,24 @@ void clearScreen() {
 }
 
 #ifdef __linux__
+/*
+====================
+save_keypress
+
+	Сохраняет стандартные настройки терминала
+====================
+*/
 void save_keypress() {
 	tcgetattr( 0, &stored_settings );
 }
 
+/*
+====================
+set_keypress_noecho
+
+	Переводит терминал в не канонический режим и отключает оторажение на экране нажатых клавиш
+====================
+*/
 void set_keypress_noecho() {
 	struct termios new_settings;
 	new_settings = stored_settings;
@@ -34,6 +64,13 @@ void set_keypress_noecho() {
 	tcsetattr( 0, TCSANOW, &new_settings );
 }
 
+/*
+====================
+load_keypress
+
+	Возвращает стандартные настройки терминала
+====================
+*/
 void load_keypress() {
 	tcsetattr( 0, TCSANOW, &stored_settings );
 }

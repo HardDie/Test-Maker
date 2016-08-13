@@ -1,5 +1,12 @@
 #include "TestFunctions.h"
 
+/*
+====================
+test_question_answer
+
+	Проводится по типу отображения, сначала отображается вопрос, а по нажатию клавиши ответ
+====================
+*/
 char test_question_answer() {
 #ifdef __linux__
 	set_keypress_noecho();
@@ -32,6 +39,13 @@ char test_question_answer() {
 	return 0;
 }
 
+/*
+====================
+test_answer_question
+
+	Проводится по типу отображения, сначала отображается ответ, а по нажатию клавиши вопрос
+====================
+*/
 char test_answer_question() {
 #ifdef __linux__
 	set_keypress_noecho();
@@ -64,6 +78,13 @@ char test_answer_question() {
 	return 0;
 }
 
+/*
+====================
+test_mixing
+
+	Проводится по типу отображения, в случайном порядке определяет вывод вопроса - ответа, или ответа - вопроса
+====================
+*/
 char test_mixing() {
 #ifdef __linux__
 	set_keypress_noecho();
@@ -117,6 +138,13 @@ char test_mixing() {
 	return 0;
 }
 
+/*
+====================
+test_typing_question
+
+	Проводится по типу набора вопроса при выведеном ответе
+====================
+*/
 char test_typing_question() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
@@ -157,6 +185,13 @@ char test_typing_question() {
 	return 0;
 }
 
+/*
+====================
+test_typing_answer
+
+	Проводится по типу набора ответа при выведеном вопросе
+====================
+*/
 char test_typing_answer() {
 	bool repeat = false;
 	while ( repeat || !test.newWord() ) {
@@ -197,6 +232,13 @@ char test_typing_answer() {
 	return 0;
 }
 
+/*
+====================
+test_typing_mix
+
+	Проводится по типу набора, в случайном порядке определяет что вводить вопрос или ответ
+====================
+*/
 char test_typing_mix() {
 	bool repeat = false;
 	while ( repeat || !test.mixNewWord() ) {
