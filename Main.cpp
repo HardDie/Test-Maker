@@ -94,9 +94,6 @@ int main( int argc, char **argv ) {
 			break;
 			/* Main menu */
 		case ST_MENU:
-#ifdef __linux__
-			set_keypress_noecho();
-#endif
 			state = typeTest();
 			break;
 			/* Question -> Answer */
@@ -175,6 +172,9 @@ typeTest
 ====================
 */
 int	typeTest() {
+#ifdef __linux__
+	set_keypress_noecho();
+#endif
 	clearScreen();
 	cout << "Choose test type:\n";
 	cout << "1. Question -> Answer\n";
